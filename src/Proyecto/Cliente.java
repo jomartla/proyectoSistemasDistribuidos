@@ -1,3 +1,5 @@
+package Proyecto;
+import java.io.IOException;
 import java.net.Socket;
 
 public class Cliente {
@@ -11,7 +13,12 @@ public class Cliente {
 	
 	
 	private void Login(String ipServidor, int puertoServidor){
-		Socket s = new Socket(ipServidor,puertoServidor);
+		try {
+			Socket s = new Socket(ipServidor,puertoServidor);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 }

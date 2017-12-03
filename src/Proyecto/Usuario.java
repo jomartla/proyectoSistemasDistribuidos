@@ -1,28 +1,28 @@
+package Proyecto;
 
 public class Usuario {
-  private String nombreReal;
+	private String nombreReal;
 	private String nombreUsuario;
 	private String contrasena;
 	private String direccion;
-	
-	
-	public String getNombreReal(){
+
+	public String getNombreReal() {
 		return nombreReal;
 	}
-	
-	public String getNombreUsuario(){
+
+	public String getNombreUsuario() {
 		return nombreUsuario;
 	}
-	
-	public String getContrasena(){
+
+	public String getContrasena() {
 		return contrasena;
 	}
-	
-	public String getDireccion(){
+
+	public String getDireccion() {
 		return direccion;
 	}
-	
-	public void setDireccion(String d){
+
+	public void setDireccion(String d) {
 		direccion = d;
 	}
 
