@@ -2,7 +2,7 @@ import java.net.Socket;
 
 public class Cliente {
 	
-	int puertoServidor
+	int puertoServidor;
 	String ipServidor;
 	
 	public static void main(String[] args) {
