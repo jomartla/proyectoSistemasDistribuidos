@@ -31,10 +31,12 @@ public class AtenderPeticionServidor implements Runnable {
 				peticionGet(peticion, escribirRespuesta);
 			} else if (peticion.startsWith("Add")){
 				peticionAdd(peticion, escribirRespuesta);
-			} else if (peticion.startsWith("Connect")){
-				peticionConnect(peticion, escribirRespuesta);
+			} else if (peticion.startsWith("ConnectTo")){
+				peticionConnectToSomeone(peticion, escribirRespuesta);
 			} else if (peticion.startsWith("Disconnect")){
 				peticionDisconnect(peticion,escribirRespuesta);
+			} else if (peticion.startsWith("Connect")){
+				peticionConnect(peticion,escribirRespuesta);
 			}
 			
 		} catch (IOException e) {
@@ -91,7 +93,7 @@ public class AtenderPeticionServidor implements Runnable {
 			}
 			escribirRespuesta.flush();
 	}
-	public void peticionConnect(String linea, PrintWriter escribirRespuesta) {
+	public void peticionConnectToSomeone(String linea, PrintWriter escribirRespuesta) {
 		
 		String[] partes = linea.split(" ");
 		
@@ -119,6 +121,22 @@ public class AtenderPeticionServidor implements Runnable {
 				}
 		} else {
 			escribirRespuesta.println("error 422");
+		}
+		escribirRespuesta.flush();
+	}
+	public void peticionConnect(String linea, PrintWriter escribirRespuesta) {
+		
+		String[] partes = linea.split(" ");
+		
+		if(usuarios.containsKey(partes[1])){	
+				if (usuarios.get(partes[1]).getDireccion().equals(socketCliente.getInetAddress().toString())){
+					usuarios.get(partes[1]).setDireccion(socketCliente.getInetAddress().toString());
+					escribirRespuesta.println("ok");
+				} else{
+					escribirRespuesta.println("error 426");
+				}
+		} else {
+			escribirRespuesta.println("error 427");
 		}
 		escribirRespuesta.flush();
 	

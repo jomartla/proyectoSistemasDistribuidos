@@ -25,9 +25,9 @@ Add - Serie 411-415
 	error 411: Usuario ya existe
 	error 412: Contraseña demasiado corta (< de 4 caracteres)
 	
-Connect - Serie 416-420
+ConnectTo - Serie 416-420
 
-	peticion: Connect nomUsuario
+	peticion: ConnectTo nomUsuario
 	Respuesta en caso bueno: ok inetAddressDestino
 	
 	error 416: Usuario no existe
@@ -41,6 +41,15 @@ Disconnect - Serie 421-425
 	error 421: nomUsuario para el que se pide la desconexión no es el mismo que el que hace la petición
 	error 422: Usuario de la petición no existe.
 	
+Connect - Serie 426-430
+
+	peticion: Connect nomUsuario
+	Respuesta en caso bueno: ok
+	
+	error 426: nomUsuario para el que se pide la conexión no es el mismo que el que hace la petición
+	error 427: Usuario de la petición no existe.
+	
+
 	
 	
 	
