@@ -17,7 +17,7 @@ public class Servidor {
 		try {
 			servidor = new ServerSocket(10000);
 			ExecutorService pool = Executors.newCachedThreadPool();	
-
+			
 			while (true){
 				leerFichero();
 				
