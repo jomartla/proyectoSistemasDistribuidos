@@ -8,18 +8,19 @@ import Cerrar.Cerrar;
 
 public class Servidor {
 	
-	private static ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
+	private static HashMap<String,Usuario> usuarios = new HashMap<String,Usuario>();
 	
 	public static void main(String[] args) {
 		
 		ServerSocket servidor=null;
 		
-		leerFichero();
 		try {
 			servidor = new ServerSocket(10000);
 			ExecutorService pool = Executors.newCachedThreadPool();	
 
 			while (true){
+				leerFichero();
+				
 				final Socket cliente = servidor.accept();
 
 				AtenderPeticionServidor atenderCliente = new AtenderPeticionServidor(cliente,usuarios);
@@ -43,7 +44,7 @@ public class Servidor {
 		fis = new FileInputStream("usuarios.dat");
 		ois = new ObjectInputStream(fis);
 		
-		usuarios=(ArrayList<Usuario>) ois.readObject();
+		usuarios=(HashMap<String,Usuario>) ois.readObject();
 		
 		}catch(FileNotFoundException e){
 			System.out.println("1"+e.getMessage());
