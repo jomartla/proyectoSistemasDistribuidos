@@ -1,8 +1,29 @@
 # proyectoSistemasDistribuidos Videollamada en Java
 
-Errores: Mensaje tipo: Error codigoError 
+Errores: 
 
-LOGIN - Serie 401-410
+Login - Serie 401-405
 
-	Error 401: UsuarioNoEncontrado
-	Error 402: Contraseña incorrecta	
+	peticion: Login nomUsuario contraseña
+	Respuesta en caso bueno: ok
+	
+	error 401: UsuarioNoEncontrado
+	error 402: Contraseña incorrecta	
+		
+Get - Serie 406-410
+
+	peticion: Get nomUsuario
+	Respuesta en caso bueno: ok nombreReal direccion
+	
+	error 406: Usuario pedido no existe
+	
+Add - Serie 411-415
+
+	peticion: Add nomUsuario contraseña nombreReal
+	Respuesta en caso bueno: ok
+	
+	error 411: Usuario ya existe
+	error 412: Contraseña demasiado corta (< de 4 caracteres)
+	
+	
+	
