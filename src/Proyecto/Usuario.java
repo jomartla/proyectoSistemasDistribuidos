@@ -8,6 +8,13 @@ public class Usuario implements Serializable {
 	private String contrasena;
 	private String direccion;
 
+	public Usuario(String nombreReal, String nombreUsuario, String contrasena, String direccion){
+		this.nombreReal=nombreReal;
+		this.nombreUsuario=nombreUsuario;
+		this.contrasena=contrasena;
+		this.direccion=direccion;
+	}
+	
 	public String getNombreReal() {
 		return nombreReal;
 	}
