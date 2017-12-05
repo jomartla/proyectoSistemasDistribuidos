@@ -83,9 +83,13 @@ public class Registrarse extends JFrame {
 		panel_2.add(btnRegistrarse);
 	}
 	
+
+	//Al presionar el boton acceder, se envia un mensaje al servidor con los datos introducidos (no se permiten campos vacios)
+	//y este respondera con diferentes respuestas en funcion de si se ha podido completar la opcion (Especificado en README)
+	//Si se ha añadido correctamente, la ventana se cerrara automaticamente
 	protected void registrarse() {
-		if(!tfContrasena.getText().isEmpty() || !tfNUsuario.getText().isEmpty() || !tfNReal.getText().isEmpty()){
-			escritura.println("Add " + tfNUsuario.getText() + " " + tfContrasena.getText() + " " + tfNReal.getText());
+		if(!tfContrasena.getText().replaceAll("\\s","").isEmpty() || !tfNUsuario.getText().replaceAll("\\s","").isEmpty() || !tfNReal.getText().replaceAll("\\s","").isEmpty()){
+			escritura.println("Add " + tfNUsuario.getText().replaceAll("\\s","") + " " + tfContrasena.getText().replaceAll("\\s","") + " " + tfNReal.getText().replaceAll("\\s",""));
 			escritura.flush();
 			
 			try {

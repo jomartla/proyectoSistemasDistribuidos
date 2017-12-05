@@ -91,7 +91,8 @@ public class Login extends JFrame {
 	}
 
 
-
+	//Al presionar el boton registrarse, se despliega una nueva ventana, en la cual se le pediran los datos correspondientes
+	//para registrarse en la aplicacion
 	protected void registrarse() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -106,10 +107,11 @@ public class Login extends JFrame {
 	}
 
 
-
+	//Al presionar el boton acceder, se envia un mensaje al servidor con los datos introducidos (no se permiten campos vacios)
+	//y este respondera con diferentes respuestas en funcion de si se ha podido completar la opcion (Especificado en README)
 	protected void acceder(String nombreUs) {
-		if(!tfContrasena.getText().isEmpty() || !tfUsuario.getText().isEmpty()){
-			escritura.println("Login " + tfUsuario.getText() + " " + tfContrasena.getText());
+		if(!tfContrasena.getText().replaceAll("\\s","").isEmpty() || !tfUsuario.getText().replaceAll("\\s","").isEmpty()){
+			escritura.println("Login " + tfUsuario.getText().replaceAll("\\s","") + " " + tfContrasena.getText().replaceAll("\\s",""));
 			escritura.flush();
 			
 			try {
@@ -117,6 +119,8 @@ public class Login extends JFrame {
 				if (respuesta.startsWith("ok")){
 					nombreUs = tfUsuario.getText();
 					JOptionPane.showMessageDialog(null,"Se ha logeado correctamente"); 
+					escritura.println("Connect " + tfUsuario.getText().replaceAll("\\s",""));
+					escritura.flush();
 					this.dispose();
 				}
 				else if (respuesta.startsWith("error")){
