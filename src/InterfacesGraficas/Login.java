@@ -9,6 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import Cerrar.Cerrar;
+
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
@@ -84,7 +86,7 @@ public class Login extends JFrame {
 		JButton btnAcceder = new JButton("Acceder");
 		btnAcceder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				acceder(nombreUsuario);
+				acceder(nombreUsuario,s);
 			}
 		});
 		panel.add(btnAcceder);
@@ -109,7 +111,7 @@ public class Login extends JFrame {
 
 	//Al presionar el boton acceder, se envia un mensaje al servidor con los datos introducidos (no se permiten campos vacios)
 	//y este respondera con diferentes respuestas en funcion de si se ha podido completar la opcion (Especificado en README)
-	protected void acceder(String nombreUs) {
+	protected void acceder(String nombreUs, Socket s) {
 		if(!tfContrasena.getText().replaceAll("\\s","").isEmpty() || !tfUsuario.getText().replaceAll("\\s","").isEmpty()){
 			escritura.println("Login " + tfUsuario.getText().replaceAll("\\s","") + " " + tfContrasena.getText().replaceAll("\\s",""));
 			escritura.flush();
@@ -121,6 +123,7 @@ public class Login extends JFrame {
 					JOptionPane.showMessageDialog(null,"Se ha logeado correctamente"); 
 					escritura.println("Connect " + tfUsuario.getText().replaceAll("\\s",""));
 					escritura.flush();
+					Cerrar.cerrar(s);
 					this.dispose();
 				}
 				else if (respuesta.startsWith("error")){
