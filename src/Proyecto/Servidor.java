@@ -13,7 +13,7 @@ public class Servidor {
 	public static void main(String[] args) {
 		
 		ServerSocket servidor=null;
-		
+		CyclicBarrier barrera;
 		try {
 			servidor = new ServerSocket(10000);
 			ExecutorService pool = Executors.newCachedThreadPool();	
@@ -22,14 +22,24 @@ public class Servidor {
 				leerFichero();
 				
 				final Socket cliente = servidor.accept();
+				
+				barrera = new CyclicBarrier(2);
 
-				AtenderPeticionServidor atenderCliente = new AtenderPeticionServidor(cliente,usuarios);
+				AtenderPeticionServidor atenderCliente = new AtenderPeticionServidor(cliente,usuarios,barrera);
 
 				pool.execute(atenderCliente);
+				
+				barrera.await();
 				
 				save();
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BrokenBarrierException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
 			Cerrar.cerrar(servidor);
