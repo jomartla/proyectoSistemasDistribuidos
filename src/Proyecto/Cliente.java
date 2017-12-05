@@ -1,16 +1,14 @@
 package Proyecto;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.awt.EventQueue;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
+import InterfacesGraficas.Login;
 
 public class Cliente {
 
-	static int puertoServidor;
-	static String ipServidor;
+	static int puertoServidor = 10000;
+	static String ipServidor =  "localhost";
 
 	// El nombreUsuario nos indica el nombre del usuario que esta ejecutando el
 	// cliente
@@ -21,7 +19,6 @@ public class Cliente {
 	public static void main(String[] args) {
 		Socket servidor;
 		try {
-			
 			servidor = new Socket(ipServidor, puertoServidor);
 			login(servidor);
 		} catch (IOException e) {
@@ -31,38 +28,19 @@ public class Cliente {
 	}
 		
 	//El metodo se conecta mediante su usuario y contraseña al servidor
-	//Este le devuelve un mensaje de confirmacion si se ha podido logearse, o un mensaje de error
-	//si no ha sido posible el logeo, en este caso volvera a pedir los datos para hacer un nuevo intento
+	//para ello despliega una interfaz grafica, en la cual se nos dara dos opciones, o acceder, lo que equivaldra a logearse,
+	// introduciendo su nombre y contraseña, o registrarse, como nuevo usuario, desplegando para ello una nueva ventana
 	private static void login(Socket s) {
-		PrintWriter pw = null;
-		DataInputStream di = null;
-		try {
-			di = new DataInputStream(s.getInputStream());
-			Scanner sc = new Scanner(System.in);
-			String respuesta;
-
-			do {
-
-				System.out.println("Introduce tu nombre de usuario:");
-				String nombre = sc.nextLine();
-				System.out.println("Introduce tu contraseña");
-				String contrasena = sc.nextLine();
-				pw = new PrintWriter(s.getOutputStream());
-
-				pw.println("Login " + nombre + " " + contrasena);
-
-				respuesta = di.readLine();
-
-				if (respuesta.startsWith("ok")) {
-					nombreUsuario = nombre;
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Login frame = new Login(s,nombreUsuario);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-
-			} while (respuesta.startsWith("error"));
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			}
+		});
 
 	}
 }
