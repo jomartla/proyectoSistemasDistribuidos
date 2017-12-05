@@ -8,6 +8,8 @@ import java.net.Socket;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import java.awt.EventQueue;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -91,8 +93,16 @@ public class Login extends JFrame {
 
 
 	protected void registrarse() {
-		
-		
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Registrarse frame = new Registrarse(escritura,lectura);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});		
 	}
 
 
@@ -106,6 +116,8 @@ public class Login extends JFrame {
 				String respuesta = lectura.readLine();
 				if (respuesta.startsWith("ok")){
 					nombreUs = tfUsuario.getText();
+					JOptionPane.showMessageDialog(null,"Se ha logeado correctamente"); 
+					this.dispose();
 				}
 				else if (respuesta.startsWith("error")){
 					if (respuesta.split(" ")[1].equals("401")){
