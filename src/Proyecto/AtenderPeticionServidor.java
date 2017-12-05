@@ -3,16 +3,21 @@ package Proyecto;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+
 import Cerrar.Cerrar;
 
 public class AtenderPeticionServidor implements Runnable {
 
 	private Socket socketCliente;
 	private HashMap<String, Usuario> usuarios;
+	private CyclicBarrier barrera;
 
-	public AtenderPeticionServidor(Socket socketCliente, HashMap<String, Usuario> usuarios) {
+	public AtenderPeticionServidor(Socket socketCliente, HashMap<String, Usuario> usuarios, CyclicBarrier barrera) {
 		this.socketCliente = socketCliente;
 		this.usuarios = usuarios;
+		this.barrera = barrera;
 	}
 
 	public void run() {
@@ -46,7 +51,12 @@ public class AtenderPeticionServidor implements Runnable {
 		} finally {
 			Cerrar.cerrar(leerPeticion);
 		}
-
+		try {
+			barrera.await();
+		} catch (InterruptedException | BrokenBarrierException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void peticionLogin(String linea, PrintWriter escribirRespuesta) {
