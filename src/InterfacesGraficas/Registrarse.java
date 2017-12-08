@@ -88,8 +88,8 @@ public class Registrarse extends JFrame {
 	//y este respondera con diferentes respuestas en funcion de si se ha podido completar la opcion (Especificado en README)
 	//Si se ha añadido correctamente, la ventana se cerrara automaticamente
 	protected void registrarse() {
-		if(!tfContrasena.getText().replaceAll("\\s","").isEmpty() || !tfNUsuario.getText().replaceAll("\\s","").isEmpty() || !tfNReal.getText().replaceAll("\\s","").isEmpty()){
-			escritura.println("Add " + tfNUsuario.getText().replaceAll("\\s","") + " " + tfContrasena.getText().replaceAll("\\s","") + " " + tfNReal.getText().replaceAll("\\s",""));
+		if(!tfContrasena.getText().isEmpty() || !tfNUsuario.getText().isEmpty() || !tfNReal.getText().isEmpty() || !tfContrasena.getText().contains(" ") ||  !tfNUsuario.getText().contains(" ") || !tfNReal.getText().contains(" ")){
+			escritura.println("Add " + tfNUsuario.getText() + " " + tfContrasena.getText() + " " + tfNReal.getText());
 			escritura.flush();
 			
 			try {
@@ -111,7 +111,12 @@ public class Registrarse extends JFrame {
 			}
 		}
 		else{
-			JOptionPane.showMessageDialog(null,"Error: Hay campos vacios"); 
+			if(!tfNReal.getText().contains(" ") || !tfContrasena.getText().contains(" ") ||  !tfNUsuario.getText().contains(" ")){
+				JOptionPane.showMessageDialog(null,"Error: Hay espacios en blanco"); 
+			}
+			else{
+				JOptionPane.showMessageDialog(null,"Error: Hay campos vacios"); 
+			}
 		}
 		
 	}
