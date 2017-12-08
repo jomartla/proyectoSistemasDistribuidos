@@ -14,26 +14,7 @@ public class RecibirLlamada extends JFrame {
 
 	private JPanel contentPane;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					RecibirLlamada frame = new RecibirLlamada();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
-	public RecibirLlamada() {
+	public RecibirLlamada(String nomUsuarioEntrante) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 358, 156);
 		contentPane = new JPanel();
@@ -47,7 +28,7 @@ public class RecibirLlamada extends JFrame {
 		JLabel lblNewLabel = new JLabel("Llamada entrante de: ");
 		panel_1.add(lblNewLabel);
 		
-		JLabel labelUsuarioLlamando = new JLabel("Esta llamando");
+		JLabel labelUsuarioLlamando = new JLabel(nomUsuarioEntrante);
 		panel_1.add(labelUsuarioLlamando);
 		
 		JPanel panel = new JPanel();

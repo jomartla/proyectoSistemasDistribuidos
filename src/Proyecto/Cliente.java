@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import Cerrar.Cerrar;
 import InterfacesGraficas.Llamar;
@@ -26,7 +27,8 @@ public class Cliente {
 	// cliente
 	// se inicializa en null, debido hasta que no hagamos el proceso de login no
 	// se habra accedido al usuario
-	static String nombreUsuario = null;
+	static StringBuilder nombreUsuario = new StringBuilder();
+	static String estado = new String();
 
 	public static void main(String[] args) {
 		Socket socketServer = null;
@@ -43,23 +45,27 @@ public class Cliente {
 			
 			login(escritura, lectura);
 			
-			if(nombreUsuario != null){
+			
+			if(!nombreUsuario.toString().equals("")){
+				
 				try {
 					ExecutorService pool = Executors.newCachedThreadPool();	
 					CyclicBarrier barrera;
 					servidorCliente = new ServerSocket(11000);
+					interfazLlamada(servidorCliente, escritura, lectura);
 					while (true){
 						
 						final Socket cliente = servidorCliente.accept();
 						
 						barrera = new CyclicBarrier(2);
 
-						AtenderPeticionCliente atenderLlamadas = new AtenderPeticionCliente(barrera);
+						AtenderPeticionCliente atenderLlamadas = new AtenderPeticionCliente(cliente,estado,nombreUsuario,barrera);
 
 						pool.execute(atenderLlamadas);
 						
 						barrera.await();
 					}
+					
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -67,12 +73,29 @@ public class Cliente {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}finally{
+					escritura.println("Disconnect " +nombreUsuario.toString());
+					escritura.flush();
+					try {
+						if(lectura.readLine().equals("ok")){
+							JOptionPane.showMessageDialog(null, "Se ha desconectado...");
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 					Cerrar.cerrar(servidorCliente);
+					
 				}
 			}
+			
+			System.out.println("termionado");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		finally {
+		
+		}
+		
+		
 		
 	}
 		
@@ -84,8 +107,9 @@ public class Cliente {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Login frame = new Login(esc,lec,nombreUsuario);
+					Login frame = new Login(esc,lec,nombreUsuario,cb);
 					frame.setVisible(true);
+					frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
 					frame.addWindowListener(new java.awt.event.WindowAdapter() {
 					    @Override
 					    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -114,12 +138,19 @@ public class Cliente {
 	}
 	
 	
-	public static void interfazLlamada(PrintWriter esc, DataInputStream lec){
+	public static void interfazLlamada(ServerSocket servidor, PrintWriter esc, DataInputStream lec){
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					Llamar frame = new Llamar(esc,lec);
 					frame.setVisible(true);
+					frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
+					frame.addWindowListener(new java.awt.event.WindowAdapter() {
+					    @Override
+					    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+					    	Cerrar.cerrar(servidor);
+					    }
+					});
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

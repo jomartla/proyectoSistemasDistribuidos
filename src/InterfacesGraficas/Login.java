@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 import javax.swing.JFrame;
@@ -29,11 +30,13 @@ public class Login extends JFrame {
 	private DataInputStream lectura = null;
 	private JTextField tfUsuario;
 	private JTextField tfContrasena;
+	private CyclicBarrier cb;
 
-	public Login(PrintWriter esc, DataInputStream lec, String nombreUsuario) {
+	public Login(PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario, CyclicBarrier barrera) {
 		setTitle("Login");
 		escritura = esc;
 		lectura = lec;
+		cb = barrera;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -106,7 +109,7 @@ public class Login extends JFrame {
 	// datos introducidos (no se permiten campos vacios)
 	// y este respondera con diferentes respuestas en funcion de si se ha podido
 	// completar la opcion (Especificado en README)
-	protected void acceder(String nombreUs) {
+	protected void acceder(StringBuilder nombreUs) {
 		if (!tfContrasena.getText().isEmpty() || !tfContrasena.getText().contains(" ") || !tfUsuario.getText().isEmpty()
 				|| tfUsuario.getText().contains(" ")) {
 			escritura.println("Login " + tfUsuario.getText() + " " + tfContrasena.getText());
@@ -115,10 +118,16 @@ public class Login extends JFrame {
 			try {
 				String respuesta = lectura.readLine();
 				if (respuesta.startsWith("ok")) {
-					nombreUs = tfUsuario.getText();
+					nombreUs.delete(0, nombreUs.length());
+					nombreUs.insert(0,tfUsuario.getText());
 					JOptionPane.showMessageDialog(null, "Se ha logeado correctamente");
 					escritura.println("Connect " + tfUsuario.getText().replaceAll("\\s", ""));
 					escritura.flush();
+					
+					respuesta = lectura.readLine();
+					
+					cb.await();
+					
 					this.dispose();
 				} else if (respuesta.startsWith("error")) {
 					if (respuesta.split(" ")[1].equals("401")) {
@@ -128,6 +137,12 @@ public class Login extends JFrame {
 					}
 				}
 			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (BrokenBarrierException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
