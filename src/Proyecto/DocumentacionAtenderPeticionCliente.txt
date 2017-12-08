@@ -1,0 +1,11 @@
+# proyectoSistemasDistribuidos Videollamada en Java
+
+Errores: 
+
+Llamada - Serie 501-505
+
+	peticion: Llamada nomUsuario
+	Respuesta en caso bueno: ok
+	
+	error 501: Usuario Ocupado	
+		
