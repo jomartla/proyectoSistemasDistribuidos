@@ -29,18 +29,11 @@ public class Login extends JFrame {
 	private DataInputStream lectura = null;
 	private JTextField tfUsuario;
 	private JTextField tfContrasena;
-	private CyclicBarrier cb;
 
-	public Login(Socket s, String nombreUsuario, CyclicBarrier c) {
-		cb = c;
+	public Login(PrintWriter esc, DataInputStream lec, String nombreUsuario) {
 		setTitle("Login");
-		try {
-			escritura = new PrintWriter(s.getOutputStream());
-			lectura = new DataInputStream(s.getInputStream());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		escritura = esc;
+		lectura = lec;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -86,17 +79,12 @@ public class Login extends JFrame {
 		JButton btnAcceder = new JButton("Acceder");
 		btnAcceder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				acceder(nombreUsuario, s);
+				acceder(nombreUsuario);
 			}
 		});
-		
-		
-		
+
 		panel.add(btnAcceder);
 	}
-
-	
-	
 
 	// Al presionar el boton registrarse, se despliega una nueva ventana, en la
 	// cual se le pediran los datos correspondientes
@@ -118,11 +106,10 @@ public class Login extends JFrame {
 	// datos introducidos (no se permiten campos vacios)
 	// y este respondera con diferentes respuestas en funcion de si se ha podido
 	// completar la opcion (Especificado en README)
-	protected void acceder(String nombreUs, Socket s) {
-		if (!tfContrasena.getText().replaceAll("\\s", "").isEmpty()
-				|| !tfUsuario.getText().replaceAll("\\s", "").isEmpty()) {
-			escritura.println("Login " + tfUsuario.getText().replaceAll("\\s", "") + " "
-					+ tfContrasena.getText().replaceAll("\\s", ""));
+	protected void acceder(String nombreUs) {
+		if (!tfContrasena.getText().isEmpty() || !tfContrasena.getText().contains(" ") || !tfUsuario.getText().isEmpty()
+				|| tfUsuario.getText().contains(" ")) {
+			escritura.println("Login " + tfUsuario.getText() + " " + tfContrasena.getText());
 			escritura.flush();
 
 			try {
@@ -132,7 +119,6 @@ public class Login extends JFrame {
 					JOptionPane.showMessageDialog(null, "Se ha logeado correctamente");
 					escritura.println("Connect " + tfUsuario.getText().replaceAll("\\s", ""));
 					escritura.flush();
-					Cerrar.cerrar(s);
 					this.dispose();
 				} else if (respuesta.startsWith("error")) {
 					if (respuesta.split(" ")[1].equals("401")) {
@@ -145,7 +131,12 @@ public class Login extends JFrame {
 				e.printStackTrace();
 			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Error: Hay campos vacios");
+			if (!tfContrasena.getText().isEmpty() || !tfUsuario.getText().isEmpty()){
+				JOptionPane.showMessageDialog(null, "Error: Hay campos vacios");
+			}
+			else{
+				JOptionPane.showMessageDialog(null, "Error: Hay espacios en blanco");
+			}
 		}
 
 	}
