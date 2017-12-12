@@ -14,8 +14,10 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.awt.event.ActionEvent;
 
 public class Llamar extends JFrame {
@@ -24,14 +26,16 @@ public class Llamar extends JFrame {
 	private JTextField tdUsuarioLlamar;
 	private JPanel panel_1;
 	private JButton btnLlamar;
+	private StringBuilder nomUsuario;
 	
 	private PrintWriter escritura;
 	private DataInputStream lectura;
 
 
-	public Llamar(PrintWriter esc, DataInputStream lec) {
+	public Llamar(PrintWriter esc, DataInputStream lec, StringBuilder nomUsuario) {
 		escritura = esc;
 		lectura = lec;
+		this.nomUsuario=nomUsuario;
 		
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -69,6 +73,10 @@ public class Llamar extends JFrame {
 			escritura.println("ConnectTo " + tdUsuarioLlamar.getText().replaceAll("\\s",""));
 			escritura.flush();
 			
+			Socket socketLlamada = null;
+			PrintWriter mensajeLlamada = null;
+			DataInputStream contestacionLlamada = null;
+			
 			try {
 				String respuesta = lectura.readLine();
 				if (respuesta.startsWith("ok")){
@@ -76,7 +84,20 @@ public class Llamar extends JFrame {
 					
 					
 					////TRATAR LA LLAMADA!!!!!!!!!!!!!!!!
-					System.out.println(direccion);
+					socketLlamada = new Socket(direccion,11000);
+					mensajeLlamada = new PrintWriter(new OutputStreamWriter (socketLlamada.getOutputStream()));
+					contestacionLlamada = new DataInputStream(socketLlamada.getInputStream());
+					
+					mensajeLlamada.println("Llamada " + nomUsuario);
+					
+					respuesta = contestacionLlamada.readLine();
+					if(respuesta.startsWith("ok")){
+						
+					} else {
+						if (respuesta.split(" ")[1].equals("501")){
+							JOptionPane.showMessageDialog(null,"Error: El usuario a llamar esta ocupado"); 
+						}
+					}
 				}
 				else if (respuesta.startsWith("error")){
 					if (respuesta.split(" ")[1].equals("417")){
@@ -88,6 +109,8 @@ public class Llamar extends JFrame {
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
+			} finally {
+				Cerrar.cerrar(socketLlamada);
 			}
 			
 		}

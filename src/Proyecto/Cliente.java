@@ -144,7 +144,7 @@ public class Cliente {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Llamar frame = new Llamar(esc,lec);
+					Llamar frame = new Llamar(esc,lec, nombreUsuario);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
 					frame.addWindowListener(new java.awt.event.WindowAdapter() {
