@@ -17,32 +17,22 @@ public class Servidor {
 		try {
 			servidor = new ServerSocket(10000);
 			ExecutorService pool = Executors.newCachedThreadPool();	
+			leerFichero();
 			
 			while (true){
-				leerFichero();
 				
 				final Socket cliente = servidor.accept();
-				
-				barrera = new CyclicBarrier(2);
 
-				AtenderPeticionServidor atenderCliente = new AtenderPeticionServidor(cliente,usuarios,barrera);
+				AtenderPeticionServidor atenderCliente = new AtenderPeticionServidor(cliente,usuarios);
 
 				pool.execute(atenderCliente);
 				
-				barrera.await();
-				
-				save();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BrokenBarrierException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}finally{
 			Cerrar.cerrar(servidor);
+			save();
 		}
 	}
 	public static void leerFichero() {
