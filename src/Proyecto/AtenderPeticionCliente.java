@@ -64,7 +64,7 @@ public class AtenderPeticionCliente implements Runnable {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						RecibirLlamada frame = new RecibirLlamada(peticion.split(" ")[1]);
+						RecibirLlamada frame = new RecibirLlamada(peticion.split(" ")[1], socketCliente);
 						frame.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();

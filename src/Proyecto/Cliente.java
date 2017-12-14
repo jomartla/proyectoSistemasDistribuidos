@@ -127,7 +127,6 @@ public class Cliente {
 					e.printStackTrace();
 				}
 			}
-		
 		});
 		
 		try {

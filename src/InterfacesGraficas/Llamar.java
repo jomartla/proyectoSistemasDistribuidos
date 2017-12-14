@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 
 import Cerrar.Cerrar;
 
+import java.awt.EventQueue;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -30,6 +31,7 @@ public class Llamar extends JFrame {
 	
 	private PrintWriter escritura;
 	private DataInputStream lectura;
+	private Socket socketLlamada;
 
 
 	public Llamar(PrintWriter esc, DataInputStream lec, StringBuilder nomUsuario) {
@@ -73,7 +75,7 @@ public class Llamar extends JFrame {
 			escritura.println("ConnectTo " + tdUsuarioLlamar.getText().replaceAll("\\s",""));
 			escritura.flush();
 			
-			Socket socketLlamada = null;
+			socketLlamada = null;
 			PrintWriter mensajeLlamada = null;
 			DataInputStream contestacionLlamada = null;
 			
@@ -92,6 +94,17 @@ public class Llamar extends JFrame {
 					
 					respuesta = contestacionLlamada.readLine();
 					if(respuesta.startsWith("ok")){
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								try {
+									Chat frame = new Chat(socketLlamada, tdUsuarioLlamar.getText().replaceAll("\\s",""));
+									frame.setVisible(true);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
+						
 						
 					} else {
 						if (respuesta.split(" ")[1].equals("501")){
