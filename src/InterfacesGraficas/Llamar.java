@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import Cerrar.Cerrar;
+import Proyecto.AtenderChat;
 
 import java.awt.EventQueue;
 import java.awt.GridLayout;
@@ -19,6 +20,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.awt.event.ActionEvent;
 
 public class Llamar extends JFrame {
@@ -81,23 +84,30 @@ public class Llamar extends JFrame {
 			
 			try {
 				String respuesta = lectura.readLine();
+				System.out.println(respuesta);
 				if (respuesta.startsWith("ok")){
 					String direccion = respuesta.split(" ")[1];
 					
 					
 					////TRATAR LA LLAMADA!!!!!!!!!!!!!!!!
-					socketLlamada = new Socket(direccion,11000);
+					socketLlamada = new Socket("localhost",11000);
 					mensajeLlamada = new PrintWriter(new OutputStreamWriter (socketLlamada.getOutputStream()));
 					contestacionLlamada = new DataInputStream(socketLlamada.getInputStream());
 					
 					mensajeLlamada.println("Llamada " + nomUsuario);
+					mensajeLlamada.flush();
 					
 					respuesta = contestacionLlamada.readLine();
 					if(respuesta.startsWith("ok")){
+						ExecutorService pool = Executors.newCachedThreadPool();	
+						Socket socketChat = new Socket("localhost",  Integer.parseInt((respuesta.split(" ")[1])));
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								try {
-									Chat frame = new Chat(socketLlamada, tdUsuarioLlamar.getText().replaceAll("\\s",""));
+									Chat frame = new Chat(socketChat, tdUsuarioLlamar.getText().replaceAll("\\s",""));
+									AtenderChat atenderChat = new AtenderChat(socketChat, frame, nomUsuario.toString());
+									
+									pool.execute(atenderChat);
 									frame.setVisible(true);
 								} catch (Exception e) {
 									e.printStackTrace();

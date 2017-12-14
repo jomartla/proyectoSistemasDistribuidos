@@ -9,33 +9,48 @@ import java.net.Socket;
 import javax.swing.JTextArea;
 
 import Cerrar.Cerrar;
+import InterfacesGraficas.Chat;
 
 public class AtenderChat implements Runnable {
 
 	private Socket cliente;
-	private JTextArea textArea;
+	private Chat chat;
 	private String nomUsuario;
 	
 	
-	public AtenderChat(Socket cliente, JTextArea textArea, String nomUsuario){
+	public AtenderChat(Socket cliente, Chat chat, String nomUsuario){
 		this.cliente=cliente;
-		this.textArea=textArea;
+		this.chat=chat;
 		this.nomUsuario=nomUsuario;
 	}
 	public void run() {
 		DataInputStream leerPeticion = null;
-
-		try {
-			leerPeticion = new DataInputStream(cliente.getInputStream());
 		
+		try {		
+			leerPeticion = new DataInputStream(cliente.getInputStream());
+			
 			while (!cliente.isClosed()) {
-				textArea.append(nomUsuario+": "+leerPeticion.readLine());
+				String peticion = leerPeticion.readLine();
+				
+				if (peticion.startsWith("Escribir")){
+					String[] partes = peticion.split(" ");
+					escribir(partes[1],partes[2]);
+				}
+				
+				
+				
+				
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			Cerrar.cerrar(leerPeticion);
 		}
+		
+	}
+	
+	private void escribir(String nomUsuario, String mensaje) {
+		chat.escribir(nomUsuario, mensaje);
 		
 	}
 	

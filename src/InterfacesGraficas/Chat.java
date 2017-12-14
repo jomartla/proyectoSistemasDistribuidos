@@ -46,8 +46,6 @@ public class Chat extends JFrame {
 
 		//AQUÍ INICIAMOS UN ATENDERCHAT 
 		try {
-			//Mismo puerto que el del socketLlamada
-			servidorRecibirChat=new ServerSocket(11000);
 			
 			this.socketLlamada = socketLlamada;
 			escribirLineaSocket = new PrintWriter(new OutputStreamWriter(socketLlamada.getOutputStream()));
@@ -67,9 +65,7 @@ public class Chat extends JFrame {
 			JButton btnEnviar = new JButton("Enviar");
 			btnEnviar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					textArea.append("Me: " + textField.getText()+"\n");
-					escribirLineaSocket.println(textField.getText());
-					textField.setText("");
+					enviar();
 				}
 			});
 			GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -101,17 +97,17 @@ public class Chat extends JFrame {
 			scrollPane.setViewportView(textArea);
 			contentPane.setLayout(gl_contentPane);
 			
-			while (true){
-				
-				final Socket cliente = servidorRecibirChat.accept();
-				
-				ExecutorService pool = Executors.newCachedThreadPool();	
-
-				AtenderChat atenderChat = new AtenderChat(cliente, textArea, nomUsuario);
-
-				pool.execute(atenderChat);
-				
-			}
+//			while (true){
+//				
+//				final Socket cliente = servidorRecibirChat.accept();
+//				
+//				ExecutorService pool = Executors.newCachedThreadPool();	
+//
+//				AtenderChat atenderChat = new AtenderChat(cliente, textArea, nomUsuario);
+//
+//				pool.execute(atenderChat);
+//				
+//			}
 			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -120,5 +116,19 @@ public class Chat extends JFrame {
 		
 		
 		
+		
+		
+	}
+
+
+	protected void enviar() {
+		escribir("Me", textField.getText());
+		escribirLineaSocket.println("Escribir " +  nomUsuario + " " + textField.getText());
+		escribirLineaSocket.flush();
+		textField.setText("");		
+	}
+	
+	public void escribir(String nomUsuario, String mensaje){
+		textArea.append(nomUsuario+": " + mensaje +"\n");
 	}
 }

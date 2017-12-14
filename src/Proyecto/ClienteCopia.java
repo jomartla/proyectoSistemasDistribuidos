@@ -18,7 +18,7 @@ import Cerrar.Cerrar;
 import InterfacesGraficas.Llamar;
 import InterfacesGraficas.Login;
 
-public class Cliente {
+public class ClienteCopia {
 
 	static int puertoServidor = 10000;
 	static String ipServidor =  "localhost";
@@ -50,17 +50,19 @@ public class Cliente {
 				
 				try {
 					ExecutorService pool = Executors.newCachedThreadPool();	
-					servidorCliente = new ServerSocket(11000);
+					servidorCliente = new ServerSocket(12000);
 					interfazLlamada(servidorCliente, escritura, lectura);
 					while (true){
 						
 						final Socket cliente = servidorCliente.accept();
+						
 
 						AtenderPeticionCliente atenderLlamadas = new AtenderPeticionCliente(cliente,estado,nombreUsuario);
 
 						pool.execute(atenderLlamadas);
-						
+					
 					}
+					
 				}finally{
 					escritura.println("Disconnect " +nombreUsuario.toString());
 					escritura.flush();

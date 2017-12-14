@@ -6,6 +6,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import Proyecto.AtenderChat;
+
 import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JButton;
@@ -14,12 +17,15 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.awt.event.ActionEvent;
 
 public class RecibirLlamada extends JFrame {
 
 	private JPanel contentPane;
 	private Socket socketLlamada;
+	private PrintWriter escribirRespuesta;
 	
 
 	public RecibirLlamada(String nomUsuarioEntrante, Socket socketLlamada) {
@@ -28,7 +34,7 @@ public class RecibirLlamada extends JFrame {
 		try {
 			this.socketLlamada=socketLlamada;
 			
-			PrintWriter escribirRespuesta = new PrintWriter(new OutputStreamWriter(socketLlamada.getOutputStream()));
+			escribirRespuesta = new PrintWriter(new OutputStreamWriter(socketLlamada.getOutputStream()));
 		
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setBounds(100, 100, 358, 156);
@@ -52,7 +58,7 @@ public class RecibirLlamada extends JFrame {
 			JButton btnColgar = new JButton("Colgar");
 			btnColgar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					escribirRespuesta.println("error 501");
+					colgarLlamada();
 				}
 			});
 			panel.add(btnColgar);
@@ -60,17 +66,7 @@ public class RecibirLlamada extends JFrame {
 			JButton btnRecibir = new JButton("Recibir");
 			btnRecibir.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					escribirRespuesta.println("ok");
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							try {
-								Chat frame = new Chat(socketLlamada, nomUsuarioEntrante);
-								frame.setVisible(true);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					});
+					recibirLlamada(nomUsuarioEntrante);
 				}
 			});
 			panel.add(btnRecibir);
@@ -79,6 +75,30 @@ public class RecibirLlamada extends JFrame {
 			e.printStackTrace();
 		}
 		
+		
+	}
+
+
+	protected void colgarLlamada() {
+		escribirRespuesta.println("error 501");		
+	}
+
+
+	protected void recibirLlamada(String nomUsuarioEntrante) {
+		escribirRespuesta.println("ok");
+		ExecutorService pool = Executors.newCachedThreadPool();	
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Chat frame = new Chat(socketLlamada, nomUsuarioEntrante);
+					AtenderChat atenderChat = new AtenderChat(socketLlamada, frame, nomUsuarioEntrante);
+					pool.execute(atenderChat);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		
 	}
 
