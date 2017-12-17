@@ -76,7 +76,7 @@ public class Cliente {
 				}
 			}
 			
-			System.out.println("termionado");
+			System.out.println("terminado");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -26,13 +26,11 @@ public class Servidor {
 				AtenderPeticionServidor atenderCliente = new AtenderPeticionServidor(cliente,usuarios);
 
 				pool.execute(atenderCliente);
-				
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally{
 			Cerrar.cerrar(servidor);
-			save();
 		}
 	}
 	public static void leerFichero() {
@@ -55,26 +53,6 @@ public class Servidor {
 		} finally {
 			Cerrar.cerrar(fis);
 			Cerrar.cerrar(ois);
-		}
-	}
-	public static void save() {
-		
-		FileOutputStream fos = null;
-		ObjectOutputStream oos = null;
-		
-		try{
-		fos=new FileOutputStream("usuarios.dat");
-		oos = new ObjectOutputStream(fos) ;
-		oos.writeObject(usuarios);
-		oos.flush();
-		oos.close();
-		} catch(FileNotFoundException e){
-			System.out.println("1"+e.getMessage());
-		} catch(IOException e){
-			System.out.println("2"+e.getMessage());
-		} finally {
-			Cerrar.cerrar(fos);
-			Cerrar.cerrar(oos);
 		}
 	}
 	
