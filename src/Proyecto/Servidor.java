@@ -27,6 +27,7 @@ public class Servidor {
 
 				pool.execute(atenderCliente);
 				
+				
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

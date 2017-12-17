@@ -27,8 +27,9 @@ public class Cliente {
 	// cliente
 	// se inicializa en null, debido hasta que no hagamos el proceso de login no
 	// se habra accedido al usuario
-	static StringBuilder nombreUsuario = new StringBuilder();
-	static String estado = new String();
+	
+	
+	
 
 	public static void main(String[] args) {
 		Socket socketServer = null;
@@ -36,6 +37,9 @@ public class Cliente {
 		ServerSocket servidorCliente = null;
 		PrintWriter escritura = null;
 		DataInputStream lectura = null;
+		StringBuilder nombreUsuario = new StringBuilder();
+		String estado = new String();
+		StringBuilder puertoCliente = new StringBuilder();
 		
 		
 		try {
@@ -43,15 +47,15 @@ public class Cliente {
 			escritura = new PrintWriter(socketServer.getOutputStream());
 			lectura = new DataInputStream(socketServer.getInputStream());
 			
-			login(escritura, lectura);
+			login(escritura, lectura, nombreUsuario, puertoCliente);
 			
 			
 			if(!nombreUsuario.toString().equals("")){
 				
 				try {
 					ExecutorService pool = Executors.newCachedThreadPool();	
-					servidorCliente = new ServerSocket(11000);
-					interfazLlamada(servidorCliente, escritura, lectura);
+					servidorCliente = new ServerSocket(Integer.parseInt(puertoCliente.toString()));
+					interfazLlamada(servidorCliente, escritura, lectura, nombreUsuario);
 					while (true){
 						
 						final Socket cliente = servidorCliente.accept();
@@ -91,12 +95,12 @@ public class Cliente {
 	//El metodo se conecta mediante su usuario y contraseña al servidor
 	//para ello despliega una interfaz grafica, en la cual se nos dara dos opciones, o acceder, lo que equivaldra a logearse,
 	// introduciendo su nombre y contraseña, o registrarse, como nuevo usuario, desplegando para ello una nueva ventana
-	private static void login(PrintWriter esc, DataInputStream lec) {
+	private static void login(PrintWriter esc, DataInputStream lec,StringBuilder nombreUsuario, StringBuilder puerto) {
 		CyclicBarrier cb = new CyclicBarrier(2);
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Login frame = new Login(esc,lec,nombreUsuario,cb);
+					Login frame = new Login(esc,lec,nombreUsuario,cb,puerto);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
 					frame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -128,7 +132,7 @@ public class Cliente {
 	}
 	
 	
-	public static void interfazLlamada(ServerSocket servidor, PrintWriter esc, DataInputStream lec){
+	public static void interfazLlamada(ServerSocket servidor, PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario){
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {

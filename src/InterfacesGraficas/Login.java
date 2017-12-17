@@ -31,8 +31,9 @@ public class Login extends JFrame {
 	private JTextField tfUsuario;
 	private JTextField tfContrasena;
 	private CyclicBarrier cb;
+	private JTextField textField;
 
-	public Login(PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario, CyclicBarrier barrera) {
+	public Login(PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario, CyclicBarrier barrera, StringBuilder puerto) {
 		setTitle("Login");
 		escritura = esc;
 		lectura = lec;
@@ -67,6 +68,13 @@ public class Login extends JFrame {
 
 		JPanel panel_3 = new JPanel();
 		contentPane.add(panel_3);
+		
+		JLabel lblPuertoAUsar = new JLabel("Puerto a usar (12000-15000)");
+		panel_3.add(lblPuertoAUsar);
+		
+		textField = new JTextField();
+		panel_3.add(textField);
+		textField.setColumns(10);
 
 		JPanel panel = new JPanel();
 		contentPane.add(panel);
@@ -82,7 +90,7 @@ public class Login extends JFrame {
 		JButton btnAcceder = new JButton("Acceder");
 		btnAcceder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				acceder(nombreUsuario);
+				acceder(nombreUsuario, textField.getText(), puerto);
 			}
 		});
 
@@ -109,7 +117,7 @@ public class Login extends JFrame {
 	// datos introducidos (no se permiten campos vacios)
 	// y este respondera con diferentes respuestas en funcion de si se ha podido
 	// completar la opcion (Especificado en README)
-	protected void acceder(StringBuilder nombreUs) {
+	protected void acceder(StringBuilder nombreUs, String PuertoAUsar, StringBuilder puerto) {
 		if (!tfContrasena.getText().isEmpty() || !tfContrasena.getText().contains(" ") || !tfUsuario.getText().isEmpty()
 				|| tfUsuario.getText().contains(" ")) {
 			escritura.println("Login " + tfUsuario.getText() + " " + tfContrasena.getText());
@@ -121,7 +129,9 @@ public class Login extends JFrame {
 					nombreUs.delete(0, nombreUs.length());
 					nombreUs.insert(0,tfUsuario.getText());
 					JOptionPane.showMessageDialog(null, "Se ha logeado correctamente");
-					escritura.println("Connect " + tfUsuario.getText().replaceAll("\\s", ""));
+					escritura.println("Connect " + tfUsuario.getText().replaceAll("\\s", "") + " " + PuertoAUsar);
+					puerto.delete(0, puerto.length());
+					puerto.append(PuertoAUsar);
 					escritura.flush();
 					
 					respuesta = lectura.readLine();

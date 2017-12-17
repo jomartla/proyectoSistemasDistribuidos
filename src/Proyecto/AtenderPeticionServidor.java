@@ -111,8 +111,10 @@ public class AtenderPeticionServidor implements Runnable {
 		if (usuarios.containsKey(partes[1])) {
 			if (usuarios.get(partes[1]).getDireccion().equals("")) {
 				escribirRespuesta.println("error 416");
+				
 			} else {
-				escribirRespuesta.println("ok " + usuarios.get(partes[1]).getDireccion());
+				escribirRespuesta.println("ok " + usuarios.get(partes[1]).getDireccion() + " " + usuarios.get(partes[1]).getPuerto());
+				System.out.println(usuarios.get(partes[1]).getPuerto());
 			}
 		} else {
 			escribirRespuesta.println("error 417");
@@ -144,6 +146,7 @@ public class AtenderPeticionServidor implements Runnable {
 		if (usuarios.containsKey(partes[1])) {
 			if (usuarios.get(partes[1]).getDireccion().equals(socketCliente.getInetAddress().toString())) {
 				usuarios.get(partes[1]).setDireccion(socketCliente.getInetAddress().toString());
+				usuarios.get(partes[1]).setPuerto(Integer.parseInt(partes[2]));
 				escribirRespuesta.println("ok");
 			} else {
 				escribirRespuesta.println("error 426");

@@ -86,11 +86,12 @@ public class Llamar extends JFrame {
 				String respuesta = lectura.readLine();
 				System.out.println(respuesta);
 				if (respuesta.startsWith("ok")){
-					String direccion = respuesta.split(" ")[1];
+					String[] partes = respuesta.split(" ");
+					String direccion = partes[1];
 					
 					
 					////TRATAR LA LLAMADA!!!!!!!!!!!!!!!!
-					socketLlamada = new Socket("localhost",11000);
+					socketLlamada = new Socket("localhost",Integer.parseInt(partes[2]));
 					mensajeLlamada = new PrintWriter(new OutputStreamWriter (socketLlamada.getOutputStream()));
 					contestacionLlamada = new DataInputStream(socketLlamada.getInputStream());
 					
