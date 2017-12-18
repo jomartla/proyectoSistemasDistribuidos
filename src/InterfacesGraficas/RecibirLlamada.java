@@ -27,7 +27,7 @@ public class RecibirLlamada extends JFrame {
 	private Socket socketLlamada;
 	
 
-	public RecibirLlamada(String nomUsuarioEntrante, Socket socketLlamada,  PrintWriter escribirRespuesta) {
+	public RecibirLlamada(String nomUsuarioEntrante, Socket socketLlamada,  PrintWriter escribirRespuesta, String nombreUsuarioPrincipal) {
 		
 		
 		this.socketLlamada=socketLlamada;
@@ -63,7 +63,7 @@ public class RecibirLlamada extends JFrame {
 		JButton btnRecibir = new JButton("Recibir");
 		btnRecibir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				recibirLlamada(nomUsuarioEntrante,escribirRespuesta);
+				recibirLlamada(nomUsuarioEntrante,escribirRespuesta, nombreUsuarioPrincipal);
 			}
 		});
 		panel.add(btnRecibir);
@@ -79,14 +79,14 @@ public class RecibirLlamada extends JFrame {
 	}
 
 
-	protected void recibirLlamada(String nomUsuarioEntrante,  PrintWriter escribirRespuesta) {
+	protected void recibirLlamada(String nomUsuarioEntrante,  PrintWriter escribirRespuesta, String nomUsuarioPrincipal) {
 		escribirRespuesta.println("ok");
 		escribirRespuesta.flush();
 		ExecutorService pool = Executors.newCachedThreadPool();	
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Chat frame = new Chat(socketLlamada, nomUsuarioEntrante);
+					Chat frame = new Chat(socketLlamada, nomUsuarioPrincipal);
 					AtenderChat atenderChat = new AtenderChat(socketLlamada, frame, nomUsuarioEntrante);
 					pool.execute(atenderChat);
 					frame.setVisible(true);

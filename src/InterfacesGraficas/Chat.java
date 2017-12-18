@@ -50,16 +50,17 @@ public class Chat extends JFrame {
 
 	public Chat(Socket socketLlamada, String nomUsuario) {
 		setResizable(false);
-		
+		this.nomUsuario = nomUsuario;
 
 		//AQUÍ INICIAMOS UN ATENDERCHAT 
 		try {
+			
 			
 			this.socketLlamada = socketLlamada;
 			escribirLineaSocket = new PrintWriter(new OutputStreamWriter(socketLlamada.getOutputStream()));
 			recibirRespuesta = new DataInputStream(socketLlamada.getInputStream());
 	
-			setTitle("Chat");
+			setTitle("Chat - "+nomUsuario);
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setBounds(100, 100, 443, 241);
 			contentPane = new JPanel();

@@ -64,13 +64,13 @@ public class Llamar extends JFrame {
 		btnLlamar = new JButton("Llamar");
 		btnLlamar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				llamar();
+				llamar(nomUsuario.toString());
 			}
 		});
 		panel_1.add(btnLlamar);
 	}
 
-	protected void llamar() {
+	protected void llamar(String nomUsuarioPrincipal) {
 		if (!tdUsuarioLlamar.getText().replaceAll("\\s", "").isEmpty()) {
 			escritura.println("ConnectTo " + tdUsuarioLlamar.getText().replaceAll("\\s", ""));
 			escritura.flush();
@@ -104,7 +104,7 @@ public class Llamar extends JFrame {
 								public void run() {
 									try {
 										Chat frame = new Chat(socketChat,
-												tdUsuarioLlamar.getText().replaceAll("\\s", ""));
+												nomUsuarioPrincipal);
 										AtenderChat atenderChat = new AtenderChat(socketChat, frame,
 												nomUsuario.toString());
 

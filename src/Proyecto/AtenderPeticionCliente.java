@@ -44,7 +44,7 @@ public class AtenderPeticionCliente implements Runnable {
 				String peticion = leerPeticion.readLine();
 				
 				if (peticion.startsWith("Llamada")) {
-					peticionLlamada(peticion, escribirRespuesta);
+					peticionLlamada(peticion, escribirRespuesta, nomUsuario.toString());
 				}
 				
 			}
@@ -56,7 +56,7 @@ public class AtenderPeticionCliente implements Runnable {
 		
 	}
 
-	private void peticionLlamada(String peticion, PrintWriter escribirRespuesta) {
+	private void peticionLlamada(String peticion, PrintWriter escribirRespuesta, String nomUsuario) {
 		
 		if(estado.equals("ocupado")){
 			escribirRespuesta.println("error 501");
@@ -72,7 +72,7 @@ public class AtenderPeticionCliente implements Runnable {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
-							RecibirLlamada frame = new RecibirLlamada(peticion.split(" ")[1], socketChat, escribirRespuesta);
+							RecibirLlamada frame = new RecibirLlamada(peticion.split(" ")[1], socketChat, escribirRespuesta,nomUsuario );
 							frame.setDefaultCloseOperation(RecibirLlamada.DISPOSE_ON_CLOSE);
 							frame.setVisible(true);
 						} catch (Exception e) {
