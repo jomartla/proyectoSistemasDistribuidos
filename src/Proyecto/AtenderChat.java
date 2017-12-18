@@ -39,8 +39,10 @@ public class AtenderChat implements Runnable {
 				String peticion = leerPeticion.readLine();
 				
 				if (peticion.startsWith("Escribir")){
-					String[] partes = peticion.split(" ");
-					escribir(partes[1],partes[2]);
+					String aux = peticion.substring(peticion.indexOf(" "));
+					String mensaje = aux.substring(aux.indexOf(" "));
+					String nomUsuario = aux.substring(0, aux.indexOf(" "));
+					escribir(nomUsuario,mensaje);
 				}
 				if (peticion.startsWith("Archivo")){
 					String[] partes = peticion.split(" ");
