@@ -40,6 +40,7 @@ public class Cliente {
 		StringBuilder nombreUsuario = new StringBuilder();
 		String estado = new String();
 		StringBuilder puertoCliente = new StringBuilder();
+		StringBuilder puertoChat = new StringBuilder();
 		
 		
 		try {
@@ -47,20 +48,18 @@ public class Cliente {
 			escritura = new PrintWriter(socketServer.getOutputStream());
 			lectura = new DataInputStream(socketServer.getInputStream());
 			
-			login(escritura, lectura, nombreUsuario, puertoCliente);
-			
+			login(escritura, lectura, nombreUsuario, puertoCliente, puertoChat);
+			ServerSocket servidorChat = new ServerSocket(Integer.parseInt(puertoChat.toString()));
 			
 			if(!nombreUsuario.toString().equals("")){
-				
 				try {
 					ExecutorService pool = Executors.newCachedThreadPool();	
 					servidorCliente = new ServerSocket(Integer.parseInt(puertoCliente.toString()));
 					interfazLlamada(servidorCliente, escritura, lectura, nombreUsuario);
 					while (true){
-						
 						final Socket cliente = servidorCliente.accept();
 
-						AtenderPeticionCliente atenderLlamadas = new AtenderPeticionCliente(cliente,estado,nombreUsuario);
+						AtenderPeticionCliente atenderLlamadas = new AtenderPeticionCliente(cliente,estado,nombreUsuario, servidorChat);
 
 						pool.execute(atenderLlamadas);
 						
@@ -95,12 +94,12 @@ public class Cliente {
 	//El metodo se conecta mediante su usuario y contraseña al servidor
 	//para ello despliega una interfaz grafica, en la cual se nos dara dos opciones, o acceder, lo que equivaldra a logearse,
 	// introduciendo su nombre y contraseña, o registrarse, como nuevo usuario, desplegando para ello una nueva ventana
-	private static void login(PrintWriter esc, DataInputStream lec,StringBuilder nombreUsuario, StringBuilder puerto) {
+	private static void login(PrintWriter esc, DataInputStream lec,StringBuilder nombreUsuario, StringBuilder puertoCliente, StringBuilder puertoChat) {
 		CyclicBarrier cb = new CyclicBarrier(2);
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Login frame = new Login(esc,lec,nombreUsuario,cb,puerto);
+					Login frame = new Login(esc,lec,nombreUsuario,cb,puertoCliente,puertoChat);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
 					frame.addWindowListener(new java.awt.event.WindowAdapter() {

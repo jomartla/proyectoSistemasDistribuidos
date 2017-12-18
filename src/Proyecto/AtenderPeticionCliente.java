@@ -18,19 +18,23 @@ public class AtenderPeticionCliente implements Runnable {
 	Socket socketCliente;
 	String estado;
 	StringBuilder nomUsuario;
-	static  int puertoChat=13000;
+	int puertoChat;
+	ServerSocket servidorChat;
 
-	public AtenderPeticionCliente(Socket s, String est, StringBuilder nomUs) {
+	public AtenderPeticionCliente(Socket s, String est, StringBuilder nomUs, ServerSocket servidorChat) {
 		socketCliente = s;
 		estado = est;
 		nomUsuario = nomUs;
+		puertoChat = servidorChat.getLocalPort();
+		this.servidorChat= servidorChat;
 	}
 
 	@Override
 	public void run() {
 		DataInputStream leerPeticion = null;
 		PrintWriter escribirRespuesta = null;
-
+		
+		
 		try {
 			leerPeticion = new DataInputStream(socketCliente.getInputStream());
 			escribirRespuesta = new PrintWriter(new OutputStreamWriter(socketCliente.getOutputStream()));
@@ -59,19 +63,17 @@ public class AtenderPeticionCliente implements Runnable {
 			escribirRespuesta.flush();
 		}
 		else{
-			ServerSocket servidorChat = null;
 			
 			try {
-				servidorChat = new ServerSocket(puertoChat);
 				escribirRespuesta.println("ok " + puertoChat);
 				escribirRespuesta.flush();
-				puertoChat++;
 				
 				Socket socketChat = servidorChat.accept();
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
-							RecibirLlamada frame = new RecibirLlamada(peticion.split(" ")[1], socketChat);
+							RecibirLlamada frame = new RecibirLlamada(peticion.split(" ")[1], socketChat, escribirRespuesta);
+							frame.setDefaultCloseOperation(RecibirLlamada.DISPOSE_ON_CLOSE);
 							frame.setVisible(true);
 						} catch (Exception e) {
 							e.printStackTrace();
