@@ -4,9 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import Cerrar.Cerrar;
 import Proyecto.AtenderChat;
 import Proyecto.AtenderPeticionCliente;
 
@@ -19,6 +21,10 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -39,22 +45,22 @@ public class Chat extends JFrame {
 	private PrintWriter escribirLineaSocket;
 	private ServerSocket servidorRecibirChat;
 	private String nomUsuario;
-	
+	private DataInputStream recibirRespuesta;
+	private DataOutputStream escribirArchivo;
 
 	public Chat(Socket socketLlamada, String nomUsuario) {
-		
+		setResizable(false);
+		this.nomUsuario = nomUsuario;
+		this.socketLlamada = socketLlamada;
 
-		//AQUÍ INICIAMOS UN ATENDERCHAT 
 		try {
-			//Mismo puerto que el del socketLlamada
-			servidorRecibirChat=new ServerSocket(11000);
-			
-			this.socketLlamada = socketLlamada;
+
 			escribirLineaSocket = new PrintWriter(new OutputStreamWriter(socketLlamada.getOutputStream()));
+			recibirRespuesta = new DataInputStream(socketLlamada.getInputStream());
 	
-			setTitle("Chat");
+			setTitle("Chat - "+nomUsuario);
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setBounds(100, 100, 456, 338);
+			setBounds(100, 100, 443, 241);
 			contentPane = new JPanel();
 			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 			setContentPane(contentPane);
@@ -67,58 +73,112 @@ public class Chat extends JFrame {
 			JButton btnEnviar = new JButton("Enviar");
 			btnEnviar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					textArea.append("Me: " + textField.getText()+"\n");
-					escribirLineaSocket.println(textField.getText());
-					textField.setText("");
+					enviar();
 				}
 			});
+			
+			JButton btnNewButton = new JButton("Adjuntar Archivo");
+			btnNewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					enviarArchivo();
+				}
+			});
+			textArea = new JTextArea();
+			scrollPane.setViewportView(textArea);
 			GroupLayout gl_contentPane = new GroupLayout(contentPane);
 			gl_contentPane.setHorizontalGroup(
 				gl_contentPane.createParallelGroup(Alignment.LEADING)
 					.addGroup(gl_contentPane.createSequentialGroup()
-						.addContainerGap()
+						.addGap(10)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
+							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)
 							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(textField, GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE)
-								.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(textField, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
+								.addGap(10)
 								.addComponent(btnEnviar)
-								.addGap(13)))
-						.addGap(5))
+								.addGap(6)
+								.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE))))
 			);
 			gl_contentPane.setVerticalGroup(
 				gl_contentPane.createParallelGroup(Alignment.LEADING)
-					.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-						.addContainerGap()
-						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-							.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(btnEnviar))
-						.addGap(82))
+					.addGroup(gl_contentPane.createSequentialGroup()
+						.addGap(11)
+						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE)
+						.addGap(6)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+							.addGroup(gl_contentPane.createSequentialGroup()
+								.addGap(1)
+								.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+							.addComponent(btnEnviar)
+							.addComponent(btnNewButton)))
 			);
-			textArea = new JTextArea();
-			scrollPane.setViewportView(textArea);
 			contentPane.setLayout(gl_contentPane);
-			
-			while (true){
-				
-				final Socket cliente = servidorRecibirChat.accept();
-				
-				ExecutorService pool = Executors.newCachedThreadPool();	
 
-				AtenderChat atenderChat = new AtenderChat(cliente, textArea, nomUsuario);
-
-				pool.execute(atenderChat);
-				
-			}
-			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
+	}
+	protected void enviarArchivo() {
 		
-		
+		DataInputStream leerArchivo = null;
+		try {
+		String nomArchivo = textField.getText().replaceAll("//s", "");
+		File f = new File(nomArchivo);
+		if(f.exists()){
+			if(f.isFile()){
+				
+				escribir("Me","Enviando archivo");
+				escribirLineaSocket.println("Archivo "+ nomUsuario + " " + f.getName() +" "+ f.length());
+				escribirLineaSocket.flush();
+				
+				
+					String respuesta = recibirRespuesta.readLine();
+					
+					if(respuesta.startsWith("ok")){
+						
+						leerArchivo = new DataInputStream(new FileInputStream(f));
+						escribirArchivo = new DataOutputStream(socketLlamada.getOutputStream());
+						
+						byte[] buff = new byte[100];
+						int leidos = leerArchivo.read(buff);
+						while(leidos!=-1){
+							escribirArchivo.write(buff,0,leidos);
+							leidos=leerArchivo.read(buff);
+						}
+						escribirArchivo.flush();
+						escribir("Me","Archivo enviado con éxito");
+					} else {
+						JOptionPane.showMessageDialog(null, "El archivo no puede ser enviado");
+					}
+				
+				
+			}else{
+				JOptionPane.showMessageDialog(null, "El elemento a enviar no es un archivo válido");
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "Ruta no especificada");
+		}
+		textField.setText("");	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			Cerrar.cerrar(leerArchivo);
+		}
+	}
+	protected void enviar() {
+		escribir("Me", textField.getText());
+		escribirLineaSocket.println("Escribir " +  nomUsuario + " " + textField.getText());
+		escribirLineaSocket.flush();
+		textField.setText("");		
+	}
+	public Socket getSocketLlamada(){
+		return this.socketLlamada;
+	}
+	
+	public void escribir(String nomUsuario, String mensaje){
+		textArea.append(nomUsuario+": " + mensaje +"\n");
 	}
 }

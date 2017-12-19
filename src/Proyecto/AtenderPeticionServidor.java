@@ -11,7 +11,7 @@ import Cerrar.Cerrar;
 public class AtenderPeticionServidor implements Runnable {
 
 	private Socket socketCliente;
-	private HashMap<String, Usuario> usuarios;
+	private static HashMap<String, Usuario> usuarios;
 
 	public AtenderPeticionServidor(Socket socketCliente, HashMap<String, Usuario> usuarios) {
 		this.socketCliente = socketCliente;
@@ -94,11 +94,11 @@ public class AtenderPeticionServidor implements Runnable {
 			if (partes[2].length() < 4) {
 				escribirRespuesta.println("error 412");
 			} else {
-				// POSIBLE PROBLEMA CON INETADRESS
 				Usuario nuevoUsuario = new Usuario(partes[3], partes[1], partes[2],
 						socketCliente.getInetAddress().toString());
 				usuarios.put(partes[1], nuevoUsuario);
 				escribirRespuesta.println("ok");
+				save();
 			}
 		}
 		escribirRespuesta.flush();
@@ -111,8 +111,10 @@ public class AtenderPeticionServidor implements Runnable {
 		if (usuarios.containsKey(partes[1])) {
 			if (usuarios.get(partes[1]).getDireccion().equals("")) {
 				escribirRespuesta.println("error 416");
+				
 			} else {
-				escribirRespuesta.println("ok " + usuarios.get(partes[1]).getDireccion());
+				escribirRespuesta.println("ok " + usuarios.get(partes[1]).getDireccion() + " " + usuarios.get(partes[1]).getPuerto());
+				System.out.println(usuarios.get(partes[1]).getPuerto());
 			}
 		} else {
 			escribirRespuesta.println("error 417");
@@ -144,6 +146,7 @@ public class AtenderPeticionServidor implements Runnable {
 		if (usuarios.containsKey(partes[1])) {
 			if (usuarios.get(partes[1]).getDireccion().equals(socketCliente.getInetAddress().toString())) {
 				usuarios.get(partes[1]).setDireccion(socketCliente.getInetAddress().toString());
+				usuarios.get(partes[1]).setPuerto(Integer.parseInt(partes[2]));
 				escribirRespuesta.println("ok");
 			} else {
 				escribirRespuesta.println("error 426");
@@ -154,4 +157,25 @@ public class AtenderPeticionServidor implements Runnable {
 		escribirRespuesta.flush();
 
 	}
+public static void save() {
+		
+		FileOutputStream fos = null;
+		ObjectOutputStream oos = null;
+		
+		try{
+		fos=new FileOutputStream("usuarios.dat");
+		oos = new ObjectOutputStream(fos) ;
+		oos.writeObject(usuarios);
+		oos.flush();
+		oos.close();
+		} catch(FileNotFoundException e){
+			System.out.println("1"+e.getMessage());
+		} catch(IOException e){
+			System.out.println("2"+e.getMessage());
+		} finally {
+			Cerrar.cerrar(fos);
+			Cerrar.cerrar(oos);
+		}
+	}
+	
 }
