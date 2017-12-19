@@ -21,18 +21,20 @@ public class AtenderChat implements Runnable {
 	private String nomUsuario;
 	
 	
-	public AtenderChat(Socket cliente, Chat chat, String nomUsuario){
-		this.cliente=cliente;
+	public AtenderChat(Chat chat, String nomUsuario){
+		this.cliente=chat.getSocketLlamada();
 		this.chat=chat;
 		this.nomUsuario=nomUsuario;
 	}
 	public void run() {
 		DataInputStream leerPeticion = null;
 		PrintWriter escribirRespuesta = null;
+		DataInputStream leerFichero =null;
+		DataOutputStream escribirFichero = null;
 		
 		try {		
 			leerPeticion = new DataInputStream(cliente.getInputStream());
-			DataInputStream leerFichero = new DataInputStream(cliente.getInputStream());
+			leerFichero = new DataInputStream(cliente.getInputStream());
 			escribirRespuesta = new PrintWriter(new OutputStreamWriter(cliente.getOutputStream()));
 			
 			while (!cliente.isClosed()) {
@@ -50,27 +52,41 @@ public class AtenderChat implements Runnable {
 					
 					File f = new File("C:/"+partes[2]);
 					
+					escribirFichero = new DataOutputStream(new FileOutputStream(f));
 					
-						escribirRespuesta.println("ok");
-						escribirRespuesta.flush();
-						
-						DataOutputStream escribirFichero = new DataOutputStream(new FileOutputStream(f));
-						
-						byte[] buff = new byte[100];
-						int leidos = leerFichero.read(buff);
-						while(leidos!=-1){
-							escribirFichero.write(buff,0,leidos);
-							leidos=leerFichero.read(buff);
-						}
-						escribirFichero.flush();
+					escribirRespuesta.println("ok");
+					escribirRespuesta.flush();
+							
+					int tamanoFichero = Integer.parseInt(partes[3]);
 					
+					
+					byte[] buff = new byte[100];
+					
+					int partesEnteras = tamanoFichero/100;
+					int restoDivision = tamanoFichero/100;
+					
+					int leidos = leerFichero.read(buff);
+					while(partesEnteras>0){
+						escribirFichero.write(buff,0,leidos);
+						leidos=leerFichero.read(buff);
+						
+						partesEnteras--;
+					}
+					
+					buff=new byte[restoDivision];
+					leerFichero.read(buff);
+					escribirFichero.write(buff);
+
+					Cerrar.cerrar(escribirFichero);
+					
+					escribir("Me","Archivo recibido con éxito");
 				}
 		
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			Cerrar.cerrar(leerPeticion);
+			Cerrar.cerrar(escribirFichero);
 		}
 		
 	}

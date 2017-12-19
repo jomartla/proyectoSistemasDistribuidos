@@ -103,10 +103,8 @@ public class Llamar extends JFrame {
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
 									try {
-										Chat frame = new Chat(socketChat,
-												nomUsuarioPrincipal);
-										AtenderChat atenderChat = new AtenderChat(socketChat, frame,
-												nomUsuario.toString());
+										Chat frame = new Chat(socketChat,nomUsuarioPrincipal);
+										AtenderChat atenderChat = new AtenderChat(frame,nomUsuario.toString());
 
 										pool.execute(atenderChat);
 										frame.setVisible(true);

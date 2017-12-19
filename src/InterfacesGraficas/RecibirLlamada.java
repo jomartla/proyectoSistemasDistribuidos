@@ -56,6 +56,7 @@ public class RecibirLlamada extends JFrame {
 		btnColgar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				colgarLlamada(escribirRespuesta);
+				
 			}
 		});
 		panel.add(btnColgar);
@@ -67,8 +68,6 @@ public class RecibirLlamada extends JFrame {
 			}
 		});
 		panel.add(btnRecibir);
-		
-		
 	}
 
 
@@ -76,6 +75,7 @@ public class RecibirLlamada extends JFrame {
 		escribirRespuesta.println("error 501");	
 		escribirRespuesta.flush();
 		this.dispose();
+		contentPane.setVisible(false);
 	}
 
 
@@ -87,9 +87,11 @@ public class RecibirLlamada extends JFrame {
 			public void run() {
 				try {
 					Chat frame = new Chat(socketLlamada, nomUsuarioPrincipal);
-					AtenderChat atenderChat = new AtenderChat(socketLlamada, frame, nomUsuarioEntrante);
+					AtenderChat atenderChat = new AtenderChat(frame, nomUsuarioEntrante);
 					pool.execute(atenderChat);
 					frame.setVisible(true);
+					contentPane.setVisible(false);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

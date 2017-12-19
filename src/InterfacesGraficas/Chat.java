@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import Cerrar.Cerrar;
 import Proyecto.AtenderChat;
 import Proyecto.AtenderPeticionCliente;
 
@@ -45,18 +46,15 @@ public class Chat extends JFrame {
 	private ServerSocket servidorRecibirChat;
 	private String nomUsuario;
 	private DataInputStream recibirRespuesta;
-	private DataInputStream leerArchivo;
 	private DataOutputStream escribirArchivo;
 
 	public Chat(Socket socketLlamada, String nomUsuario) {
 		setResizable(false);
 		this.nomUsuario = nomUsuario;
+		this.socketLlamada = socketLlamada;
 
-		//AQUÍ INICIAMOS UN ATENDERCHAT 
 		try {
-			
-			
-			this.socketLlamada = socketLlamada;
+
 			escribirLineaSocket = new PrintWriter(new OutputStreamWriter(socketLlamada.getOutputStream()));
 			recibirRespuesta = new DataInputStream(socketLlamada.getInputStream());
 	
@@ -115,19 +113,7 @@ public class Chat extends JFrame {
 							.addComponent(btnNewButton)))
 			);
 			contentPane.setLayout(gl_contentPane);
-			
-//			while (true){
-//				
-//				final Socket cliente = servidorRecibirChat.accept();
-//				
-//				ExecutorService pool = Executors.newCachedThreadPool();	
-//
-//				AtenderChat atenderChat = new AtenderChat(cliente, textArea, nomUsuario);
-//
-//				pool.execute(atenderChat);
-//				
-//			}
-			
+
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -136,6 +122,7 @@ public class Chat extends JFrame {
 	}
 	protected void enviarArchivo() {
 		
+		DataInputStream leerArchivo = null;
 		try {
 		String nomArchivo = textField.getText().replaceAll("//s", "");
 		File f = new File(nomArchivo);
@@ -143,11 +130,12 @@ public class Chat extends JFrame {
 			if(f.isFile()){
 				
 				escribir("Me","Enviando archivo");
-				escribirLineaSocket.println("Archivo "+ nomUsuario + " " + f.getName());
+				escribirLineaSocket.println("Archivo "+ nomUsuario + " " + f.getName() +" "+ f.length());
 				escribirLineaSocket.flush();
 				
 				
 					String respuesta = recibirRespuesta.readLine();
+					
 					if(respuesta.startsWith("ok")){
 						
 						leerArchivo = new DataInputStream(new FileInputStream(f));
@@ -160,9 +148,9 @@ public class Chat extends JFrame {
 							leidos=leerArchivo.read(buff);
 						}
 						escribirArchivo.flush();
-						
-					} else if (respuesta.startsWith("error") && respuesta.split("")[1].equals("601")){
-						JOptionPane.showMessageDialog(null, "El archivo debe tener otro nombre. Si no, reemplazaría a otro archivo");
+						escribir("Me","Archivo enviado con éxito");
+					} else {
+						JOptionPane.showMessageDialog(null, "El archivo no puede ser enviado");
 					}
 				
 				
@@ -176,13 +164,18 @@ public class Chat extends JFrame {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		} finally {
+			Cerrar.cerrar(leerArchivo);
+		}
 	}
 	protected void enviar() {
 		escribir("Me", textField.getText());
 		escribirLineaSocket.println("Escribir " +  nomUsuario + " " + textField.getText());
 		escribirLineaSocket.flush();
 		textField.setText("");		
+	}
+	public Socket getSocketLlamada(){
+		return this.socketLlamada;
 	}
 	
 	public void escribir(String nomUsuario, String mensaje){
