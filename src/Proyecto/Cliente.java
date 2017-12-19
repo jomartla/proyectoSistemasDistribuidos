@@ -27,8 +27,9 @@ public class Cliente {
 	// cliente
 	// se inicializa en null, debido hasta que no hagamos el proceso de login no
 	// se habra accedido al usuario
-	static StringBuilder nombreUsuario = new StringBuilder();
-	static String estado = new String();
+	
+	
+	
 
 	public static void main(String[] args) {
 		Socket socketServer = null;
@@ -36,6 +37,10 @@ public class Cliente {
 		ServerSocket servidorCliente = null;
 		PrintWriter escritura = null;
 		DataInputStream lectura = null;
+		StringBuilder nombreUsuario = new StringBuilder();
+		String estado = new String();
+		StringBuilder puertoCliente = new StringBuilder();
+		StringBuilder puertoChat = new StringBuilder();
 		
 		
 		try {
@@ -43,35 +48,22 @@ public class Cliente {
 			escritura = new PrintWriter(socketServer.getOutputStream());
 			lectura = new DataInputStream(socketServer.getInputStream());
 			
-			login(escritura, lectura);
-			
+			login(escritura, lectura, nombreUsuario, puertoCliente, puertoChat);
+			ServerSocket servidorChat = new ServerSocket(Integer.parseInt(puertoChat.toString()));
 			
 			if(!nombreUsuario.toString().equals("")){
-				
 				try {
 					ExecutorService pool = Executors.newCachedThreadPool();	
-					CyclicBarrier barrera;
-					servidorCliente = new ServerSocket(11000);
-					interfazLlamada(servidorCliente, escritura, lectura);
+					servidorCliente = new ServerSocket(Integer.parseInt(puertoCliente.toString()));
+					interfazLlamada(servidorCliente, escritura, lectura, nombreUsuario);
 					while (true){
-						
 						final Socket cliente = servidorCliente.accept();
-						
-						barrera = new CyclicBarrier(2);
 
-						AtenderPeticionCliente atenderLlamadas = new AtenderPeticionCliente(cliente,estado,nombreUsuario,barrera);
+						AtenderPeticionCliente atenderLlamadas = new AtenderPeticionCliente(cliente,estado,nombreUsuario, servidorChat);
 
 						pool.execute(atenderLlamadas);
 						
-						barrera.await();
 					}
-					
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (BrokenBarrierException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}finally{
 					escritura.println("Disconnect " +nombreUsuario.toString());
 					escritura.flush();
@@ -87,7 +79,7 @@ public class Cliente {
 				}
 			}
 			
-			System.out.println("termionado");
+			System.out.println("terminado");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -102,12 +94,12 @@ public class Cliente {
 	//El metodo se conecta mediante su usuario y contraseña al servidor
 	//para ello despliega una interfaz grafica, en la cual se nos dara dos opciones, o acceder, lo que equivaldra a logearse,
 	// introduciendo su nombre y contraseña, o registrarse, como nuevo usuario, desplegando para ello una nueva ventana
-	private static void login(PrintWriter esc, DataInputStream lec) {
+	private static void login(PrintWriter esc, DataInputStream lec,StringBuilder nombreUsuario, StringBuilder puertoCliente, StringBuilder puertoChat) {
 		CyclicBarrier cb = new CyclicBarrier(2);
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Login frame = new Login(esc,lec,nombreUsuario,cb);
+					Login frame = new Login(esc,lec,nombreUsuario,cb,puertoCliente,puertoChat);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
 					frame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -139,7 +131,7 @@ public class Cliente {
 	}
 	
 	
-	public static void interfazLlamada(ServerSocket servidor, PrintWriter esc, DataInputStream lec){
+	public static void interfazLlamada(ServerSocket servidor, PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario){
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {

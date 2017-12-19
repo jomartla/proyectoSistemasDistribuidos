@@ -31,19 +31,21 @@ public class Login extends JFrame {
 	private JTextField tfUsuario;
 	private JTextField tfContrasena;
 	private CyclicBarrier cb;
+	private JTextField textField;
+	private JTextField textField_1;
 
-	public Login(PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario, CyclicBarrier barrera) {
+	public Login(PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario, CyclicBarrier barrera, StringBuilder puertoCliente, StringBuilder puertoChat) {
 		setTitle("Login");
 		escritura = esc;
 		lectura = lec;
 		cb = barrera;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 420);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new GridLayout(4, 0, 0, 0));
+		contentPane.setLayout(new GridLayout(5, 0, 0, 0));
 
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1);
@@ -67,6 +69,23 @@ public class Login extends JFrame {
 
 		JPanel panel_3 = new JPanel();
 		contentPane.add(panel_3);
+		
+		JLabel lblPuertoAUsar = new JLabel("Puerto a usar (Cliente)");
+		panel_3.add(lblPuertoAUsar);
+		
+		textField = new JTextField();
+		panel_3.add(textField);
+		textField.setColumns(10);
+		
+		JPanel panel_4 = new JPanel();
+		contentPane.add(panel_4);
+		
+		JLabel lblPuertoAUsar_1 = new JLabel("Puerto a usar (Chat)");
+		panel_4.add(lblPuertoAUsar_1);
+		
+		textField_1 = new JTextField();
+		panel_4.add(textField_1);
+		textField_1.setColumns(10);
 
 		JPanel panel = new JPanel();
 		contentPane.add(panel);
@@ -82,7 +101,7 @@ public class Login extends JFrame {
 		JButton btnAcceder = new JButton("Acceder");
 		btnAcceder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				acceder(nombreUsuario);
+				acceder(nombreUsuario, textField.getText(), textField_1.getText(), puertoCliente, puertoChat);
 			}
 		});
 
@@ -109,7 +128,7 @@ public class Login extends JFrame {
 	// datos introducidos (no se permiten campos vacios)
 	// y este respondera con diferentes respuestas en funcion de si se ha podido
 	// completar la opcion (Especificado en README)
-	protected void acceder(StringBuilder nombreUs) {
+	protected void acceder(StringBuilder nombreUs, String PuertoAUsarCliente, String puertoAUsarChat, StringBuilder puertoCliente, StringBuilder puertoChat) {
 		if (!tfContrasena.getText().isEmpty() || !tfContrasena.getText().contains(" ") || !tfUsuario.getText().isEmpty()
 				|| tfUsuario.getText().contains(" ")) {
 			escritura.println("Login " + tfUsuario.getText() + " " + tfContrasena.getText());
@@ -121,7 +140,12 @@ public class Login extends JFrame {
 					nombreUs.delete(0, nombreUs.length());
 					nombreUs.insert(0,tfUsuario.getText());
 					JOptionPane.showMessageDialog(null, "Se ha logeado correctamente");
-					escritura.println("Connect " + tfUsuario.getText().replaceAll("\\s", ""));
+					escritura.println("Connect " + tfUsuario.getText().replaceAll("\\s", "") + " " + PuertoAUsarCliente);
+					puertoCliente.delete(0, puertoCliente.length());
+					puertoCliente.append(PuertoAUsarCliente);
+					
+					puertoChat.delete(0, puertoChat.length());
+					puertoChat.append(puertoAUsarChat);
 					escritura.flush();
 					
 					respuesta = lectura.readLine();

@@ -7,12 +7,14 @@ public class Usuario implements Serializable {
 	private String nombreUsuario;
 	private String contrasena;
 	private String direccion;
+	private int puerto;
 
 	public Usuario(String nombreReal, String nombreUsuario, String contrasena, String direccion){
 		this.nombreReal=nombreReal;
 		this.nombreUsuario=nombreUsuario;
 		this.contrasena=contrasena;
 		this.direccion=direccion;
+		this.puerto = 12000;
 	}
 	
 	public String getNombreReal() {
@@ -33,6 +35,14 @@ public class Usuario implements Serializable {
 
 	public void setDireccion(String d) {
 		direccion = d;
+	}
+	
+	public void setPuerto(int p){
+		puerto = p;
+	}
+	
+	public int getPuerto(){
+		return(puerto);
 	}
 
 }

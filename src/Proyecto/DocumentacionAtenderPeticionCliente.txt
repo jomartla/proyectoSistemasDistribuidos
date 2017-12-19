@@ -9,3 +9,9 @@ Llamada - Serie 501-505
 	
 	error 501: Usuario Ocupado	
 		
+Envío Archivo - Serie 601-605
+
+	peticion: Archivo nomUsuario nomArchivo
+	Respuesta en caso bueno: ok
+	
+	error 601: Nombre del archivo ya existe
