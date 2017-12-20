@@ -1,21 +1,11 @@
 package InterfacesGraficas;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import java.awt.GridLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.*;
+import javax.swing.border.*;
+import java.awt.*;
+import java.awt.event.*;
 
 public class Registrarse extends JFrame {
 
@@ -26,7 +16,7 @@ public class Registrarse extends JFrame {
 	DataInputStream lectura;
 	private JTextField tfNReal;
 	private JTextField tfNUsuario;
-	private JTextField tfContrasena;
+	private JPasswordField tfContrasena;
 	public Registrarse(PrintWriter esc, DataInputStream lec) {
 		escritura = esc;
 		lectura = lec;
@@ -64,7 +54,7 @@ public class Registrarse extends JFrame {
 		JLabel lblNewLabel_2 = new JLabel("Contrase\u00F1a:");
 		panel_3.add(lblNewLabel_2);
 		
-		tfContrasena = new JTextField();
+		tfContrasena = new JPasswordField();
 		panel_3.add(tfContrasena);
 		tfContrasena.setColumns(10);
 		

@@ -1,38 +1,17 @@
 package InterfacesGraficas;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import Cerrar.Cerrar;
-import Proyecto.AtenderChat;
-import Proyecto.AtenderPeticionCliente;
 
-import javax.swing.JScrollPane;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JTextArea;
-import javax.swing.DropMode;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JTextField;
-import javax.swing.JButton;
+import javax.swing.*;
+import javax.swing.GroupLayout.*;
+import javax.swing.border.*;
 import java.awt.event.ActionListener;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.*;
+
 import java.net.Socket;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
 import java.awt.event.ActionEvent;
 
 public class Chat extends JFrame {
@@ -47,25 +26,28 @@ public class Chat extends JFrame {
 	private DataOutputStream escribirArchivo;
 
 	public Chat(Socket socketLlamada, String nomUsuario) {
+		
 		setResizable(false);
 		this.nomUsuario = nomUsuario;
 		this.socketLlamada = socketLlamada;
 
 		try {
-
+			
 			escribirLineaSocket = new PrintWriter(new OutputStreamWriter(socketLlamada.getOutputStream()));
 			recibirRespuesta = new DataInputStream(socketLlamada.getInputStream());
 
 			setTitle("Chat - " + nomUsuario);
-			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			setBounds(100, 100, 443, 241);
 			contentPane = new JPanel();
 			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+			
 			setContentPane(contentPane);
 
 			JScrollPane scrollPane = new JScrollPane();
 
 			textField = new JTextField();
+			textField.addKeyListener(new PresionarEnter());
 			textField.setColumns(10);
 
 			JButton btnEnviar = new JButton("Enviar");
@@ -74,7 +56,8 @@ public class Chat extends JFrame {
 					enviar();
 				}
 			});
-
+			
+			
 			JButton btnNewButton = new JButton("Adjuntar Archivo");
 			btnNewButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
@@ -82,6 +65,7 @@ public class Chat extends JFrame {
 				}
 			});
 			textArea = new JTextArea();
+			textArea.setEditable(false);
 			scrollPane.setViewportView(textArea);
 			GroupLayout gl_contentPane = new GroupLayout(contentPane);
 			gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -109,6 +93,13 @@ public class Chat extends JFrame {
 			e1.printStackTrace();
 		}
 
+	}
+	public class PresionarEnter extends KeyAdapter {
+	      public void keyPressed(KeyEvent ke) {
+	          if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+	              enviar();
+	          }
+	      }
 	}
 
 	protected void enviarArchivo() {
@@ -157,10 +148,14 @@ public class Chat extends JFrame {
 	}
 
 	protected void enviar() {
-		escribir("Me", textField.getText());
-		escribirLineaSocket.println("Escribir " + nomUsuario + " " + textField.getText());
-		escribirLineaSocket.flush();
-		textField.setText("");
+		if(textField.getText().equals("")){
+			
+		}else{
+			escribir("Me", textField.getText());
+			escribirLineaSocket.println("Escribir " + nomUsuario + " " + textField.getText());
+			escribirLineaSocket.flush();
+			textField.setText("");
+		}
 	}
 
 	public Socket getSocketLlamada() {

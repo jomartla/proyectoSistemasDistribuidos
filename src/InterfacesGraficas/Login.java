@@ -1,26 +1,11 @@
 package InterfacesGraficas;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import Cerrar.Cerrar;
-
-import java.awt.EventQueue;
-import java.awt.GridLayout;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.io.*;
+import java.util.concurrent.*;
+import javax.swing.*;
+import javax.swing.border.*;
+import java.awt.*;
+import java.awt.event.*;
 
 public class Login extends JFrame {
 
@@ -29,7 +14,7 @@ public class Login extends JFrame {
 	private PrintWriter escritura = null;
 	private DataInputStream lectura = null;
 	private JTextField tfUsuario;
-	private JTextField tfContrasena;
+	private JPasswordField tfContrasena;
 	private CyclicBarrier cb;
 	private JTextField textField;
 	private JTextField textField_1;
@@ -63,7 +48,7 @@ public class Login extends JFrame {
 		JLabel lblNewLabel_1 = new JLabel("Contrase\u00F1a");
 		panel_2.add(lblNewLabel_1);
 
-		tfContrasena = new JTextField();
+		tfContrasena = new JPasswordField();
 		panel_2.add(tfContrasena);
 		tfContrasena.setColumns(10);
 
@@ -123,7 +108,7 @@ public class Login extends JFrame {
 			}
 		});
 	}
-
+	
 	// Al presionar el boton acceder, se envia un mensaje al servidor con los
 	// datos introducidos (no se permiten campos vacios)
 	// y este respondera con diferentes respuestas en funcion de si se ha podido

@@ -1,28 +1,15 @@
 package InterfacesGraficas;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import Cerrar.Cerrar;
 import Proyecto.AtenderChat;
+import Cerrar.Cerrar;
 
-import java.awt.EventQueue;
-import java.awt.GridLayout;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
+import javax.swing.*;
+import javax.swing.border.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.awt.event.ActionEvent;
+import java.util.concurrent.*;
 
 public class Llamar extends JFrame {
 
@@ -51,7 +38,7 @@ public class Llamar extends JFrame {
 		JPanel panel = new JPanel();
 		contentPane.add(panel);
 
-		JLabel lblUsuarioALlamar = new JLabel("Usuario a Llamar:");
+		JLabel lblUsuarioALlamar = new JLabel("Usuario a conectar:");
 		panel.add(lblUsuarioALlamar);
 
 		tdUsuarioLlamar = new JTextField();
@@ -61,7 +48,7 @@ public class Llamar extends JFrame {
 		panel_1 = new JPanel();
 		contentPane.add(panel_1);
 
-		btnLlamar = new JButton("Llamar");
+		btnLlamar = new JButton("Conectar");
 		btnLlamar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				llamar(nomUsuario.toString());
@@ -84,7 +71,10 @@ public class Llamar extends JFrame {
 				System.out.println(respuesta);
 				if (respuesta.startsWith("ok")) {
 					String[] partes = respuesta.split(" ");
-					String direccion = partes[1];
+
+					//UTILIZAR AL QUITAR LOCALHOST
+					
+//					String direccion = partes[1];
 
 					socketLlamada = new Socket("localhost", Integer.parseInt(partes[2]));
 					mensajeLlamada = new PrintWriter(new OutputStreamWriter(socketLlamada.getOutputStream()));
@@ -105,7 +95,6 @@ public class Llamar extends JFrame {
 									try {
 										Chat frame = new Chat(socketChat,nomUsuarioPrincipal);
 										AtenderChat atenderChat = new AtenderChat(frame,nomUsuario.toString());
-										frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
 										pool.execute(atenderChat);
 										frame.setVisible(true);
 									} catch (Exception e) {
@@ -113,11 +102,10 @@ public class Llamar extends JFrame {
 									}
 								}
 							});
-
 						}
 						else{
 							if (respuesta.split(" ")[1].equals("501")) {
-								JOptionPane.showMessageDialog(null, "Error: El usuario a llamar ha rechazado la llamada");
+								JOptionPane.showMessageDialog(null, "Error: El usuario a conectar ha rechazado la petición");
 							}
 						}
 					} else {
@@ -125,9 +113,9 @@ public class Llamar extends JFrame {
 					}
 				} else if (respuesta.startsWith("error")) {
 					if (respuesta.split(" ")[1].equals("417")) {
-						JOptionPane.showMessageDialog(null, "Error: El usuario a llamar no existe");
+						JOptionPane.showMessageDialog(null, "Error: El usuario a conectar no existe");
 					} else if (respuesta.split(" ")[1].equals("416")) {
-						JOptionPane.showMessageDialog(null, "Error: El usuario a llamar no esta conectado");
+						JOptionPane.showMessageDialog(null, "Error: El usuario a conectar no está disponible");
 					}
 				}
 			} catch (IOException e) {

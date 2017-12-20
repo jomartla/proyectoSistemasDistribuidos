@@ -1,18 +1,10 @@
 package Proyecto;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.Socket;
-
-import javax.swing.JTextArea;
-
 import Cerrar.Cerrar;
 import InterfacesGraficas.Chat;
+
+import java.io.*;
+import java.net.*;
 
 public class AtenderChat implements Runnable {
 
@@ -68,15 +60,13 @@ public class AtenderChat implements Runnable {
 						
      					partesEnteras--;
 					}
-					
-					
+		
       				escribirFichero.write(buff,0,leidos);
 
 					Cerrar.cerrar(escribirFichero);
 					
 					escribir("Me","Archivo recibido con éxito");
 				}
-		
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -85,7 +75,6 @@ public class AtenderChat implements Runnable {
 		}
 		
 	}
-	
 	private void escribir(String nomUsuario, String mensaje) {
 		chat.escribir(nomUsuario, mensaje);
 		

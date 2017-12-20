@@ -1,17 +1,11 @@
 package Proyecto;
 
-import java.awt.EventQueue;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-
 import Cerrar.Cerrar;
 import InterfacesGraficas.RecibirLlamada;
+
+import java.awt.*;
+import java.io.*;
+import java.net.*;
 
 public class AtenderPeticionCliente implements Runnable {
 
@@ -34,7 +28,6 @@ public class AtenderPeticionCliente implements Runnable {
 		DataInputStream leerPeticion = null;
 		PrintWriter escribirRespuesta = null;
 		
-		
 		try {
 			leerPeticion = new DataInputStream(socketCliente.getInputStream());
 			escribirRespuesta = new PrintWriter(new OutputStreamWriter(socketCliente.getOutputStream()));
@@ -46,7 +39,6 @@ public class AtenderPeticionCliente implements Runnable {
 				if (peticion.startsWith("Llamada")) {
 					peticionLlamada(peticion, escribirRespuesta, nomUsuario.toString());
 				}
-				
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -55,7 +47,6 @@ public class AtenderPeticionCliente implements Runnable {
 		}
 		
 	}
-
 	private void peticionLlamada(String peticion, PrintWriter escribirRespuesta, String nomUsuario) {
 		
 		if(estado.equals("ocupado")){

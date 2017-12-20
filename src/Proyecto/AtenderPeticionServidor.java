@@ -3,8 +3,6 @@ package Proyecto;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 
 import Cerrar.Cerrar;
 
