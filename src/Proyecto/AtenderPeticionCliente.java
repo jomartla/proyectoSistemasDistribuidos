@@ -1,5 +1,6 @@
 package Proyecto;
 
+
 import Cerrar.Cerrar;
 import InterfacesGraficas.RecibirLlamada;
 
@@ -28,6 +29,7 @@ public class AtenderPeticionCliente implements Runnable {
 		DataInputStream leerPeticion = null;
 		PrintWriter escribirRespuesta = null;
 		
+
 		try {
 			leerPeticion = new DataInputStream(socketCliente.getInputStream());
 			escribirRespuesta = new PrintWriter(new OutputStreamWriter(socketCliente.getOutputStream()));
@@ -47,6 +49,7 @@ public class AtenderPeticionCliente implements Runnable {
 		}
 		
 	}
+
 	private void peticionLlamada(String peticion, PrintWriter escribirRespuesta, String nomUsuario) {
 		
 		if(estado.equals("ocupado")){

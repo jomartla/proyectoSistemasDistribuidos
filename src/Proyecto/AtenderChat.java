@@ -6,6 +6,7 @@ import InterfacesGraficas.Chat;
 import java.io.*;
 import java.net.*;
 
+
 public class AtenderChat implements Runnable {
 
 	private Socket cliente;
@@ -23,10 +24,12 @@ public class AtenderChat implements Runnable {
 		this.escribirRespuesta = chat.getPrintWriter();
 	}
 	public void run() {
+
 		
 		DataOutputStream escribirFichero = null;
 		
 		try {		
+
 			
 			while (!cliente.isClosed()) {
 				String peticion = leerPeticion.readLine();
@@ -44,6 +47,7 @@ public class AtenderChat implements Runnable {
 					File f = new File("C:/"+partes[2]);
 					
 					escribirFichero = new DataOutputStream(new FileOutputStream(f));
+
 							
 					int tamanoFichero = Integer.parseInt(partes[3]);
 					
@@ -51,6 +55,7 @@ public class AtenderChat implements Runnable {
 					byte[] buff = new byte[100];
 					
 					int partesEnteras = tamanoFichero/100;
+
 					
 					int leidos = leerPeticion.read(buff);
 					
@@ -63,10 +68,12 @@ public class AtenderChat implements Runnable {
 		
       				escribirFichero.write(buff,0,leidos);
 
+
 					Cerrar.cerrar(escribirFichero);
 					
-					escribir("Me","Archivo recibido con éxito");
+					escribir("Me","Archivo recibido con Ã©xito");
 				}
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -75,6 +82,11 @@ public class AtenderChat implements Runnable {
 		}
 		
 	}
+	private void escribir(String nomUsuario, String mensaje) {
+		chat.escribir(nomUsuario, mensaje);
+		
+	}
+	
 	private void escribir(String nomUsuario, String mensaje) {
 		chat.escribir(nomUsuario, mensaje);
 		

@@ -1,5 +1,6 @@
 package InterfacesGraficas;
 
+
 import Cerrar.Cerrar;
 
 import javax.swing.*;
@@ -9,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.*;
+
 
 import java.net.Socket;
 
@@ -26,18 +28,20 @@ public class Chat extends JFrame {
 	private DataOutputStream escribirArchivo;
 
 	public Chat(Socket socketLlamada, String nomUsuario) {
-		
+
 		setResizable(false);
 		this.nomUsuario = nomUsuario;
 		this.socketLlamada = socketLlamada;
 
 		try {
+
 			
 			escribirLineaSocket = new PrintWriter(new OutputStreamWriter(socketLlamada.getOutputStream()));
 			recibirRespuesta = new DataInputStream(socketLlamada.getInputStream());
 
 			setTitle("Chat - " + nomUsuario);
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
 			setBounds(100, 100, 443, 241);
 			contentPane = new JPanel();
 			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -57,7 +61,7 @@ public class Chat extends JFrame {
 				}
 			});
 			
-			
+
 			JButton btnNewButton = new JButton("Adjuntar Archivo");
 			btnNewButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
@@ -65,6 +69,7 @@ public class Chat extends JFrame {
 				}
 			});
 			textArea = new JTextArea();
+
 			textArea.setEditable(false);
 			scrollPane.setViewportView(textArea);
 			GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -86,12 +91,14 @@ public class Chat extends JFrame {
 											GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 											GroupLayout.PREFERRED_SIZE))
 									.addComponent(btnEnviar).addComponent(btnNewButton))));
+
 			contentPane.setLayout(gl_contentPane);
 
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+
 
 	}
 	public class PresionarEnter extends KeyAdapter {
@@ -130,15 +137,16 @@ public class Chat extends JFrame {
 
 					Cerrar.cerrar(leerArchivo);
 
-					escribir("Me", "Archivo enviado con Èxito");
+					escribir("Me", "Archivo enviado con √©xito");
 
 				} else {
-					JOptionPane.showMessageDialog(null, "El elemento a enviar no es un archivo v·lido");
+					JOptionPane.showMessageDialog(null, "El elemento a enviar no es un archivo v√°lido");
 				}
 			} else {
 				JOptionPane.showMessageDialog(null, "Ruta no especificada");
 			}
 			textField.setText("");
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -146,6 +154,7 @@ public class Chat extends JFrame {
 			Cerrar.cerrar(leerArchivo);
 		}
 	}
+
 
 	protected void enviar() {
 		if(textField.getText().equals("")){
@@ -172,5 +181,6 @@ public class Chat extends JFrame {
 
 	public PrintWriter getPrintWriter() {
 		return escribirLineaSocket;
+
 	}
 }

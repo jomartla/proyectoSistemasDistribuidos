@@ -20,6 +20,7 @@ public class Cliente {
 	// se inicializa en null, debido hasta que no hagamos el proceso de login no
 	// se habra accedido al usuario
 
+
 	public static void main(String[] args) {
 		Socket socketServer = null;
 		Socket socketCliente = null;
@@ -66,6 +67,7 @@ public class Cliente {
 					Cerrar.cerrar(servidorCliente);
 				}
 			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -74,9 +76,9 @@ public class Cliente {
 		}
 	}
 		
-	//El metodo se conecta mediante su usuario y contraseña al servidor
+	//El metodo se conecta mediante su usuario y contraseÃ±a al servidor
 	//para ello despliega una interfaz grafica, en la cual se nos dara dos opciones, o acceder, lo que equivaldra a logearse,
-	// introduciendo su nombre y contraseña, o registrarse, como nuevo usuario, desplegando para ello una nueva ventana
+	// introduciendo su nombre y contraseÃ±a, o registrarse, como nuevo usuario, desplegando para ello una nueva ventana
 	private static void login(PrintWriter esc, DataInputStream lec,StringBuilder nombreUsuario, StringBuilder puertoCliente, StringBuilder puertoChat) {
 		CyclicBarrier cb = new CyclicBarrier(2);
 		EventQueue.invokeLater(new Runnable() {
