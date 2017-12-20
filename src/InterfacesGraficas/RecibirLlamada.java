@@ -1,25 +1,15 @@
 package InterfacesGraficas;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import Proyecto.AtenderChat;
 
-import java.awt.GridLayout;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.awt.event.ActionEvent;
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.border.*;
+import java.awt.event.*;
+import java.io.*;
+import java.net.*;
+import java.util.concurrent.*;
+
 
 public class RecibirLlamada extends JFrame {
 
@@ -29,9 +19,7 @@ public class RecibirLlamada extends JFrame {
 
 	public RecibirLlamada(String nomUsuarioEntrante, Socket socketLlamada,  PrintWriter escribirRespuesta, String nombreUsuarioPrincipal) {
 		
-		
 		this.socketLlamada=socketLlamada;
-		
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 358, 156);
@@ -40,10 +28,12 @@ public class RecibirLlamada extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new GridLayout(2, 0, 0, 0));
 		
+
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1);
 		
-		JLabel lblNewLabel = new JLabel("Llamada entrante de: ");
+		JLabel lblNewLabel = new JLabel("Peticion de chat: ");
+
 		panel_1.add(lblNewLabel);
 		
 		JLabel labelUsuarioLlamando = new JLabel(nomUsuarioEntrante);
@@ -51,8 +41,9 @@ public class RecibirLlamada extends JFrame {
 		
 		JPanel panel = new JPanel();
 		contentPane.add(panel);
+
 		
-		JButton btnColgar = new JButton("Colgar");
+		JButton btnColgar = new JButton("Rechazar");
 		btnColgar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				colgarLlamada(escribirRespuesta);
@@ -61,7 +52,8 @@ public class RecibirLlamada extends JFrame {
 		});
 		panel.add(btnColgar);
 		
-		JButton btnRecibir = new JButton("Recibir");
+		JButton btnRecibir = new JButton("Aceptar");
+
 		btnRecibir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				recibirLlamada(nomUsuarioEntrante,escribirRespuesta, nombreUsuarioPrincipal);
@@ -90,6 +82,8 @@ public class RecibirLlamada extends JFrame {
 					AtenderChat atenderChat = new AtenderChat(frame, nomUsuarioEntrante);
 					pool.execute(atenderChat);
 					frame.setVisible(true);
+					frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
+
 					contentPane.setVisible(false);
 					
 				} catch (Exception e) {

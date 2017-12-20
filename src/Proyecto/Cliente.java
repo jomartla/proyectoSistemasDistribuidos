@@ -1,22 +1,14 @@
 package Proyecto;
 
-import java.awt.EventQueue;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import Cerrar.Cerrar;
 import InterfacesGraficas.Llamar;
 import InterfacesGraficas.Login;
+
+import java.awt.*;
+import java.io.*;
+import java.net.*;
+import java.util.concurrent.*;
+import javax.swing.*;
 
 public class Cliente {
 
@@ -27,9 +19,7 @@ public class Cliente {
 	// cliente
 	// se inicializa en null, debido hasta que no hagamos el proceso de login no
 	// se habra accedido al usuario
-	
-	
-	
+
 
 	public static void main(String[] args) {
 		Socket socketServer = null;
@@ -75,25 +65,20 @@ public class Cliente {
 						e.printStackTrace();
 					}
 					Cerrar.cerrar(servidorCliente);
-					
 				}
 			}
-			
-			System.out.println("terminado");
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		finally {
 		
 		}
-		
-		
-		
 	}
 		
-	//El metodo se conecta mediante su usuario y contraseña al servidor
+	//El metodo se conecta mediante su usuario y contraseÃ±a al servidor
 	//para ello despliega una interfaz grafica, en la cual se nos dara dos opciones, o acceder, lo que equivaldra a logearse,
-	// introduciendo su nombre y contraseña, o registrarse, como nuevo usuario, desplegando para ello una nueva ventana
+	// introduciendo su nombre y contraseÃ±a, o registrarse, como nuevo usuario, desplegando para ello una nueva ventana
 	private static void login(PrintWriter esc, DataInputStream lec,StringBuilder nombreUsuario, StringBuilder puertoCliente, StringBuilder puertoChat) {
 		CyclicBarrier cb = new CyclicBarrier(2);
 		EventQueue.invokeLater(new Runnable() {
@@ -105,7 +90,6 @@ public class Cliente {
 					frame.addWindowListener(new java.awt.event.WindowAdapter() {
 					    @Override
 					    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-					    	
 					       try {
 							cb.await();
 						} catch (InterruptedException | BrokenBarrierException e) {
@@ -129,8 +113,7 @@ public class Cliente {
 		}
 		
 	}
-	
-	
+
 	public static void interfazLlamada(ServerSocket servidor, PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario){
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
