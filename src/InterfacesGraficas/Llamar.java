@@ -30,6 +30,8 @@ public class Llamar extends JFrame {
 		escritura = esc;
 		lectura = lec;
 		this.nomUsuario = nomUsuario;
+		
+		this.setTitle(nomUsuario.toString());
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 390, 155);
@@ -94,7 +96,7 @@ public class Llamar extends JFrame {
 
 					respuesta = contestacionLlamada.readLine();
 					if (respuesta.startsWith("ok")) {
-						Socket socketChat = new Socket("localhost", Integer.parseInt((respuesta.split(" ")[1])));
+						//Socket socketChat = new Socket("localhost", Integer.parseInt((respuesta.split(" ")[1])));
 						respuesta = contestacionLlamada.readLine();
 						if (respuesta.startsWith("ok")) {
 							ExecutorService pool = Executors.newCachedThreadPool();
@@ -102,7 +104,7 @@ public class Llamar extends JFrame {
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
 									try {
-										Chat frame = new Chat(socketChat,nomUsuarioPrincipal);
+										Chat frame = new Chat(socketLlamada,nomUsuarioPrincipal);
 										AtenderChat atenderChat = new AtenderChat(frame,nomUsuario.toString());
 
 
@@ -136,7 +138,7 @@ public class Llamar extends JFrame {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
-				Cerrar.cerrar(socketLlamada);
+				
 			}
 
 		} else {

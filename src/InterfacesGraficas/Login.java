@@ -17,7 +17,6 @@ public class Login extends JFrame {
 	private JPasswordField tfContrasena;
 	private CyclicBarrier cb;
 	private JTextField textField;
-	private JTextField textField_1;
 
 	public Login(PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario, CyclicBarrier barrera, StringBuilder puertoCliente, StringBuilder puertoChat) {
 		setTitle("Login");
@@ -26,7 +25,7 @@ public class Login extends JFrame {
 		cb = barrera;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 420);
+		setBounds(100, 100, 321, 412);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -64,13 +63,6 @@ public class Login extends JFrame {
 		
 		JPanel panel_4 = new JPanel();
 		contentPane.add(panel_4);
-		
-		JLabel lblPuertoAUsar_1 = new JLabel("Puerto a usar (Chat)");
-		panel_4.add(lblPuertoAUsar_1);
-		
-		textField_1 = new JTextField();
-		panel_4.add(textField_1);
-		textField_1.setColumns(10);
 
 		JPanel panel = new JPanel();
 		contentPane.add(panel);
@@ -86,7 +78,7 @@ public class Login extends JFrame {
 		JButton btnAcceder = new JButton("Acceder");
 		btnAcceder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				acceder(nombreUsuario, textField.getText(), textField_1.getText(), puertoCliente, puertoChat);
+				acceder(nombreUsuario, textField.getText(), puertoCliente, puertoChat);
 			}
 		});
 
@@ -113,7 +105,7 @@ public class Login extends JFrame {
 	// datos introducidos (no se permiten campos vacios)
 	// y este respondera con diferentes respuestas en funcion de si se ha podido
 	// completar la opcion (Especificado en README)
-	protected void acceder(StringBuilder nombreUs, String PuertoAUsarCliente, String puertoAUsarChat, StringBuilder puertoCliente, StringBuilder puertoChat) {
+	protected void acceder(StringBuilder nombreUs, String PuertoAUsarCliente, StringBuilder puertoCliente, StringBuilder puertoChat) {
 		if (!tfContrasena.getText().isEmpty() || !tfContrasena.getText().contains(" ") || !tfUsuario.getText().isEmpty()
 				|| tfUsuario.getText().contains(" ")) {
 			escritura.println("Login " + tfUsuario.getText() + " " + tfContrasena.getText());
@@ -130,7 +122,6 @@ public class Login extends JFrame {
 					puertoCliente.append(PuertoAUsarCliente);
 					
 					puertoChat.delete(0, puertoChat.length());
-					puertoChat.append(puertoAUsarChat);
 					escritura.flush();
 					
 					respuesta = lectura.readLine();

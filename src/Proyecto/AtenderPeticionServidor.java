@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.*;
 
 import Cerrar.Cerrar;
+import sun.net.ConnectionResetException;
 
 public class AtenderPeticionServidor implements Runnable {
 
@@ -42,7 +43,11 @@ public class AtenderPeticionServidor implements Runnable {
 					peticionConnect(peticion, escribirRespuesta);
 				}
 			}
+		} catch (SocketException e) {
+			System.out.println("Se ha desconectado un cliente");
+		
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			Cerrar.cerrar(leerPeticion);
@@ -112,7 +117,7 @@ public class AtenderPeticionServidor implements Runnable {
 				
 			} else {
 				escribirRespuesta.println("ok " + usuarios.get(partes[1]).getDireccion() + " " + usuarios.get(partes[1]).getPuerto());
-				System.out.println(usuarios.get(partes[1]).getPuerto());
+				//System.out.println(usuarios.get(partes[1]).getPuerto());
 			}
 		} else {
 			escribirRespuesta.println("error 417");

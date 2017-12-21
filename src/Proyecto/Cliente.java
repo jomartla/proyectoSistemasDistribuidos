@@ -37,19 +37,21 @@ public class Cliente {
 			socketServer = new Socket(ipServidor, puertoServidor);
 			escritura = new PrintWriter(socketServer.getOutputStream());
 			lectura = new DataInputStream(socketServer.getInputStream());
+			ExecutorService pool = Executors.newCachedThreadPool();	
 			
 			login(escritura, lectura, nombreUsuario, puertoCliente, puertoChat);
-			ServerSocket servidorChat = new ServerSocket(Integer.parseInt(puertoChat.toString()));
+			//ServerSocket servidorChat = new ServerSocket(Integer.parseInt(puertoChat.toString()));
 			
 			if(!nombreUsuario.toString().equals("")){
 				try {
-					ExecutorService pool = Executors.newCachedThreadPool();	
+					
 					servidorCliente = new ServerSocket(Integer.parseInt(puertoCliente.toString()));
 					interfazLlamada(servidorCliente, escritura, lectura, nombreUsuario);
 					while (true){
 						final Socket cliente = servidorCliente.accept();
 
-						AtenderPeticionCliente atenderLlamadas = new AtenderPeticionCliente(cliente,estado,nombreUsuario, servidorChat);
+						AtenderPeticionCliente atenderLlamadas = new AtenderPeticionCliente(cliente,estado,nombreUsuario);
+						
 
 						pool.execute(atenderLlamadas);
 						
@@ -65,6 +67,7 @@ public class Cliente {
 						e.printStackTrace();
 					}
 					Cerrar.cerrar(servidorCliente);
+					pool.shutdown();
 				}
 			}
 

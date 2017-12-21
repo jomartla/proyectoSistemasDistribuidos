@@ -28,7 +28,9 @@ public class Servidor {
 
 				pool.execute(atenderCliente);
 			}
+	
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
 			Cerrar.cerrar(servidor);

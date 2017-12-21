@@ -7,6 +7,8 @@ import InterfacesGraficas.RecibirLlamada;
 import java.awt.*;
 import java.io.*;
 import java.net.*;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 public class AtenderPeticionCliente implements Runnable {
 
@@ -16,12 +18,10 @@ public class AtenderPeticionCliente implements Runnable {
 	int puertoChat;
 	ServerSocket servidorChat;
 
-	public AtenderPeticionCliente(Socket s, String est, StringBuilder nomUs, ServerSocket servidorChat) {
+	public AtenderPeticionCliente(Socket s, String est, StringBuilder nomUs) {
 		socketCliente = s;
 		estado = est;
 		nomUsuario = nomUs;
-		puertoChat = servidorChat.getLocalPort();
-		this.servidorChat= servidorChat;
 	}
 
 	@Override
@@ -58,25 +58,38 @@ public class AtenderPeticionCliente implements Runnable {
 		}
 		else{
 			
-			try {
-				escribirRespuesta.println("ok " + puertoChat);
-				escribirRespuesta.flush();
-				
-				Socket socketChat = servidorChat.accept();
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							RecibirLlamada frame = new RecibirLlamada(peticion.split(" ")[1], socketChat, escribirRespuesta,nomUsuario );
-							frame.setDefaultCloseOperation(RecibirLlamada.DISPOSE_ON_CLOSE);
-							frame.setVisible(true);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+			escribirRespuesta.println("ok " + puertoChat);
+			escribirRespuesta.flush();
+			
+			//Socket socketChat = servidorChat.accept();
+			CyclicBarrier cb = new CyclicBarrier(2);
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						RecibirLlamada frame = new RecibirLlamada(peticion.split(" ")[1], socketCliente, escribirRespuesta,nomUsuario );
+						frame.setDefaultCloseOperation(RecibirLlamada.DISPOSE_ON_CLOSE);
+						frame.setVisible(true);
+						frame.addWindowListener(new java.awt.event.WindowAdapter() {
+						    @Override
+						    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+						       try {
+								cb.await();
+							} catch (InterruptedException | BrokenBarrierException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						    }
+						});
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				});
-			} catch (IOException e1) {
+				}
+			});
+			try {
+				cb.await();
+			} catch (InterruptedException | BrokenBarrierException e) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				e.printStackTrace();
 			}
 			
 		}

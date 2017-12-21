@@ -71,7 +71,7 @@ public class AtenderChat implements Runnable {
 
 					Cerrar.cerrar(escribirFichero);
 					
-					escribir("Me","Archivo recibido con éxito");
+					escribir("Me","Archivo recibido con Exito");
 				}
 
 			}
@@ -82,10 +82,7 @@ public class AtenderChat implements Runnable {
 		}
 		
 	}
-	private void escribir(String nomUsuario, String mensaje) {
-		chat.escribir(nomUsuario, mensaje);
-		
-	}
+
 	
 	private void escribir(String nomUsuario, String mensaje) {
 		chat.escribir(nomUsuario, mensaje);
