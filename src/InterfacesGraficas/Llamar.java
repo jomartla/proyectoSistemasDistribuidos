@@ -39,6 +39,8 @@ public class Llamar extends JFrame {
 	private PrintWriter escritura;
 	private DataInputStream lectura;
 	private Socket socketLlamada;
+	
+	private Clip sonido;
 
 	public Llamar(PrintWriter esc, DataInputStream lec, StringBuilder nomUsuario) {
 		escritura = esc;
@@ -108,7 +110,7 @@ public class Llamar extends JFrame {
 					mensajeLlamada.println("Llamada " + nomUsuario);
 					mensajeLlamada.flush();
 					
-					Clip sonido = null;
+				
 					try {
 						sonido = AudioSystem.getClip();
 						sonido.open(AudioSystem.getAudioInputStream(new File("llamar.wav")));
