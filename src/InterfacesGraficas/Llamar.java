@@ -84,10 +84,10 @@ public class Llamar extends JFrame {
 
 					//UTILIZAR AL QUITAR LOCALHOST
 					
-//					String direccion = partes[1];
+					String direccion = partes[1];
 
 
-					socketLlamada = new Socket("localhost", Integer.parseInt(partes[2]));
+					socketLlamada = new Socket(direccion, Integer.parseInt(partes[2]));
 					mensajeLlamada = new PrintWriter(new OutputStreamWriter(socketLlamada.getOutputStream()));
 					contestacionLlamada = new DataInputStream(socketLlamada.getInputStream());
 
