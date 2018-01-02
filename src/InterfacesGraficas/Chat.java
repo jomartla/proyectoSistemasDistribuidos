@@ -80,7 +80,7 @@ public class Chat extends JFrame {
 			
 			
 			textArea = new JTextArea();
-			textArea.append("---------- CHAT INICIADO: "+nomUsuario+ " ------------/n");
+			textArea.append("---------- CHAT INICIADO: "+nomUsuario+ " ------------\n");
 
 			textArea.setEditable(false);
 			scrollPane.setViewportView(textArea);

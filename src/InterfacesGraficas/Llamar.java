@@ -129,7 +129,7 @@ public class Llamar extends JFrame {
 						//Socket socketChat = new Socket("localhost", Integer.parseInt((respuesta.split(" ")[1])));
 						respuesta = contestacionLlamada.readLine();
 						
-						sonido.close();
+						
 						if (respuesta.startsWith("ok")) {
 							ExecutorService pool = Executors.newCachedThreadPool();
 							
@@ -147,6 +147,7 @@ public class Llamar extends JFrame {
 									}
 								}
 							});
+							sonido.close();
 
 						}
 						else{
