@@ -26,6 +26,8 @@ public class Chat extends JFrame {
 	private String nomUsuario;
 	private DataInputStream recibirRespuesta;
 	private DataOutputStream escribirArchivo;
+	private JButton btnEnviar;
+	private JButton btnAdjuntar;
 
 	public Chat(Socket socketLlamada, String nomUsuario) {
 
@@ -54,7 +56,7 @@ public class Chat extends JFrame {
 			textField.addKeyListener(new PresionarEnter());
 			textField.setColumns(10);
 
-			JButton btnEnviar = new JButton("Enviar");
+			btnEnviar = new JButton("Enviar");
 			btnEnviar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					enviar();
@@ -62,13 +64,14 @@ public class Chat extends JFrame {
 			});
 			
 
-			JButton btnNewButton = new JButton("Adjuntar Archivo");
-			btnNewButton.addActionListener(new ActionListener() {
+			btnAdjuntar = new JButton("Adjuntar Archivo");
+			btnAdjuntar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					enviarArchivo();
 				}
 			});
 			textArea = new JTextArea();
+			textArea.append("---------- CHAT INICIADO: "+nomUsuario+ " ------------");
 
 			textArea.setEditable(false);
 			scrollPane.setViewportView(textArea);
@@ -80,7 +83,7 @@ public class Chat extends JFrame {
 							.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(textField, GroupLayout.PREFERRED_SIZE, 200,
 											GroupLayout.PREFERRED_SIZE)
-									.addGap(10).addComponent(btnEnviar).addGap(6).addComponent(btnNewButton,
+									.addGap(10).addComponent(btnEnviar).addGap(6).addComponent(btnAdjuntar,
 											GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE)))));
 			gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 					.addGroup(gl_contentPane.createSequentialGroup().addGap(11)
@@ -90,7 +93,7 @@ public class Chat extends JFrame {
 									.addGroup(gl_contentPane.createSequentialGroup().addGap(1).addComponent(textField,
 											GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 											GroupLayout.PREFERRED_SIZE))
-									.addComponent(btnEnviar).addComponent(btnNewButton))));
+									.addComponent(btnEnviar).addComponent(btnAdjuntar))));
 
 			contentPane.setLayout(gl_contentPane);
 
@@ -166,7 +169,17 @@ public class Chat extends JFrame {
 			textField.setText("");
 		}
 	}
-
+	protected void desconectar() {
+		escribirLineaSocket.println("Escribir " + "---------- CHAT FINALIZADO: "+nomUsuario+ " ------------");
+		escribirLineaSocket.println("Desconectar "+ nomUsuario);
+		escribirLineaSocket.flush();
+	}
+	public void desactivar(){
+		textField.setEditable(false);
+		btnAdjuntar.disable();
+		btnEnviar.disable();
+		
+	}
 	public Socket getSocketLlamada() {
 		return this.socketLlamada;
 	}
@@ -183,4 +196,5 @@ public class Chat extends JFrame {
 		return escribirLineaSocket;
 
 	}
+
 }

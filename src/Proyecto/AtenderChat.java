@@ -40,6 +40,9 @@ public class AtenderChat implements Runnable {
 					String nomUsuario = aux.substring(0, aux.indexOf(" "));
 					escribir(nomUsuario,mensaje);
 				}
+				if (peticion.startsWith("Desconectar")){
+					this.chat.desactivar();
+				}
 				if (peticion.startsWith("Archivo")){
 					String[] partes = peticion.split(" ");
 					escribir(partes[1],"Recibiendo "+partes[2]);
