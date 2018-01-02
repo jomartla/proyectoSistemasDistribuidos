@@ -42,7 +42,6 @@ public class Usuario implements Serializable {
 	}
 	
 	public int getPuerto(){
-		direccion.substring(1);
 		return(puerto);
 	}
 

@@ -13,7 +13,7 @@ import javax.swing.*;
 public class Cliente {
 
 	static int puertoServidor = 10000;
-	static String ipServidor =  "188.79.156.12";
+	static String ipServidor =  "188.79.157.154";
 
 	// El nombreUsuario nos indica el nombre del usuario que esta ejecutando el
 	// cliente

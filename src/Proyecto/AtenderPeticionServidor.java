@@ -62,7 +62,8 @@ public class AtenderPeticionServidor implements Runnable {
 		if (usuarios.containsKey(partes[1])) {
 			if (usuarios.get(partes[1]).getContrasena().equals(partes[2])) {
 				// TO STRING E INETADRESS PUEDEN DAR PROBLEMAS
-				usuarios.get(partes[1]).setDireccion(socketCliente.getInetAddress().toString());
+				usuarios.get(partes[1]).setDireccion(socketCliente.getInetAddress().toString().substring(1));
+			
 				escribirRespuesta.println("ok");
 			} else {
 				escribirRespuesta.println("error 402");
