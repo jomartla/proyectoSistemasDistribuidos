@@ -100,7 +100,7 @@ public class AtenderPeticionServidor implements Runnable {
 				escribirRespuesta.println("error 412");
 			} else {
 				Usuario nuevoUsuario = new Usuario(partes[3], partes[1], partes[2],
-						socketCliente.getInetAddress().toString());
+						socketCliente.getInetAddress().toString().substring(1));
 				usuarios.put(partes[1], nuevoUsuario);
 				escribirRespuesta.println("ok");
 				save();
@@ -132,7 +132,7 @@ public class AtenderPeticionServidor implements Runnable {
 		String[] partes = linea.split(" ");
 
 		if (usuarios.containsKey(partes[1])) {
-			if (usuarios.get(partes[1]).getDireccion().equals(socketCliente.getInetAddress().toString())) {
+			if (usuarios.get(partes[1]).getDireccion().equals(socketCliente.getInetAddress().toString().substring(1))) {
 				usuarios.get(partes[1]).setDireccion("");
 				escribirRespuesta.println("ok");
 			} else {
@@ -149,7 +149,7 @@ public class AtenderPeticionServidor implements Runnable {
 		String[] partes = linea.split(" ");
 
 		if (usuarios.containsKey(partes[1])) {
-			if (usuarios.get(partes[1]).getDireccion().equals(socketCliente.getInetAddress().toString())) {
+			if (usuarios.get(partes[1]).getDireccion().equals(socketCliente.getInetAddress().toString().substring(1))) {
 				usuarios.get(partes[1]).setDireccion(socketCliente.getInetAddress().toString());
 				usuarios.get(partes[1]).setPuerto(Integer.parseInt(partes[2]));
 				escribirRespuesta.println("ok");
