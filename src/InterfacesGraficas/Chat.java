@@ -13,7 +13,7 @@ import java.io.*;
 
 
 import java.net.Socket;
-
+import java.util.concurrent.BrokenBarrierException;
 import java.awt.event.ActionEvent;
 
 public class Chat extends JFrame {
@@ -55,6 +55,13 @@ public class Chat extends JFrame {
 			textField = new JTextField();
 			textField.addKeyListener(new PresionarEnter());
 			textField.setColumns(10);
+			
+			this.addWindowListener(new java.awt.event.WindowAdapter() {
+			    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+			       desconectar(); 
+			    }
+			});
+
 
 			btnEnviar = new JButton("Enviar");
 			btnEnviar.addActionListener(new ActionListener() {
@@ -70,6 +77,8 @@ public class Chat extends JFrame {
 					enviarArchivo();
 				}
 			});
+			
+			
 			textArea = new JTextArea();
 			textArea.append("---------- CHAT INICIADO: "+nomUsuario+ " ------------");
 
@@ -101,7 +110,8 @@ public class Chat extends JFrame {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
+		
+		
 
 	}
 	public class PresionarEnter extends KeyAdapter {
@@ -140,10 +150,10 @@ public class Chat extends JFrame {
 
 					Cerrar.cerrar(leerArchivo);
 
-					escribir("Me", "Archivo enviado con éxito");
+					escribir("Me", "Archivo enviado con Exito");
 
 				} else {
-					JOptionPane.showMessageDialog(null, "El elemento a enviar no es un archivo válido");
+					JOptionPane.showMessageDialog(null, "El elemento a enviar no es un archivo valido");
 				}
 			} else {
 				JOptionPane.showMessageDialog(null, "Ruta no especificada");
@@ -170,7 +180,7 @@ public class Chat extends JFrame {
 		}
 	}
 	protected void desconectar() {
-		escribirLineaSocket.println("Escribir " + "---------- CHAT FINALIZADO: "+nomUsuario+ " ------------");
+		escribirLineaSocket.println("Escribir " + "---------- CHAT FINALIZADO: "+nomUsuario+ " ------------ \n");
 		escribirLineaSocket.println("Desconectar "+ nomUsuario);
 		escribirLineaSocket.flush();
 	}
