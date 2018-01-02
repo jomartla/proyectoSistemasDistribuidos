@@ -80,7 +80,7 @@ public class Chat extends JFrame {
 			
 			
 			textArea = new JTextArea();
-			textArea.append("---------- CHAT INICIADO: "+nomUsuario+ " ------------");
+			textArea.append("---------- CHAT INICIADO: "+nomUsuario+ " ------------/n");
 
 			textArea.setEditable(false);
 			scrollPane.setViewportView(textArea);
@@ -186,8 +186,8 @@ public class Chat extends JFrame {
 	}
 	public void desactivar(){
 		textField.setEditable(false);
-		btnAdjuntar.disable();
-		btnEnviar.disable();
+		btnAdjuntar.setEnabled(false);;
+		btnEnviar.setEnabled(false);;
 		
 	}
 	public Socket getSocketLlamada() {

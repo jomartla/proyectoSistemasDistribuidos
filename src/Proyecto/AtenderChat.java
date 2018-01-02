@@ -85,8 +85,6 @@ public class AtenderChat implements Runnable {
 		}
 		
 	}
-
-	
 	private void escribir(String nomUsuario, String mensaje) {
 		chat.escribir(nomUsuario, mensaje);
 		
