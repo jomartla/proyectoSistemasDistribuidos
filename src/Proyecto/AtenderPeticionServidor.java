@@ -63,6 +63,7 @@ public class AtenderPeticionServidor implements Runnable {
 			if (usuarios.get(partes[1]).getContrasena().equals(partes[2])) {
 				// TO STRING E INETADRESS PUEDEN DAR PROBLEMAS
 				usuarios.get(partes[1]).setDireccion(socketCliente.getInetAddress().toString().substring(1));
+				usuarios.get(partes[1]).setPuerto(Integer.parseInt(partes[3]));
 			
 				escribirRespuesta.println("ok");
 			} else {

@@ -108,7 +108,7 @@ public class Login extends JFrame {
 	protected void acceder(StringBuilder nombreUs, String PuertoAUsarCliente, StringBuilder puertoCliente, StringBuilder puertoChat) {
 		if (!tfContrasena.getText().isEmpty() || !tfContrasena.getText().contains(" ") || !tfUsuario.getText().isEmpty()
 				|| tfUsuario.getText().contains(" ")) {
-			escritura.println("Login " + tfUsuario.getText() + " " + tfContrasena.getText());
+			escritura.println("Login " + tfUsuario.getText() + " " + tfContrasena.getText() + " " + PuertoAUsarCliente);
 			escritura.flush();
 
 			try {
