@@ -127,7 +127,7 @@ public class Cliente {
 					frame.addWindowListener(new java.awt.event.WindowAdapter() {
 					    @Override
 					    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-					    	Cerrar.cerrar(servidor);
+					    	//Cerrar.cerrar(servidor);
 					    }
 					});
 				} catch (Exception e) {
