@@ -124,10 +124,12 @@ public class Llamar extends JFrame {
 			         
 
 					respuesta = contestacionLlamada.readLine();
-					sonido.close();
+					
 					if (respuesta.startsWith("ok")) {
 						//Socket socketChat = new Socket("localhost", Integer.parseInt((respuesta.split(" ")[1])));
 						respuesta = contestacionLlamada.readLine();
+						
+						sonido.close();
 						if (respuesta.startsWith("ok")) {
 							ExecutorService pool = Executors.newCachedThreadPool();
 							
