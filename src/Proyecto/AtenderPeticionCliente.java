@@ -10,6 +10,9 @@ import java.net.*;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
 public class AtenderPeticionCliente implements Runnable {
 
 	Socket socketCliente;
@@ -66,7 +69,12 @@ public class AtenderPeticionCliente implements Runnable {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						RecibirLlamada frame = new RecibirLlamada(peticion.split(" ")[1], socketCliente, escribirRespuesta,nomUsuario );
+						
+						 
+		
+				          
+						
+						RecibirLlamada frame = new RecibirLlamada(peticion.split(" ")[1], socketCliente, escribirRespuesta,nomUsuario);
 						frame.setDefaultCloseOperation(RecibirLlamada.DISPOSE_ON_CLOSE);
 						frame.setVisible(true);
 						frame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -80,6 +88,8 @@ public class AtenderPeticionCliente implements Runnable {
 							}
 						    }
 						});
+						
+						
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

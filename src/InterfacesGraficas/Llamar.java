@@ -1,17 +1,31 @@
 package InterfacesGraficas;
 
-import Proyecto.AtenderChat;
-import Cerrar.Cerrar;
-import Proyecto.AtenderChat;
-
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.EventQueue;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import java.util.concurrent.*;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import Proyecto.AtenderChat;
 
 
 public class Llamar extends JFrame {
@@ -93,8 +107,22 @@ public class Llamar extends JFrame {
 
 					mensajeLlamada.println("Llamada " + nomUsuario);
 					mensajeLlamada.flush();
+					
+					Clip sonido = null;
+					try {
+						sonido = AudioSystem.getClip();
+						sonido.open(AudioSystem.getAudioInputStream(new File("llamar.wav")));
+				        sonido.start();
+					} catch (LineUnavailableException | UnsupportedAudioFileException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+			         
+			     
+			         
 
 					respuesta = contestacionLlamada.readLine();
+					sonido.close();
 					if (respuesta.startsWith("ok")) {
 						//Socket socketChat = new Socket("localhost", Integer.parseInt((respuesta.split(" ")[1])));
 						respuesta = contestacionLlamada.readLine();
