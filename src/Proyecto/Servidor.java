@@ -12,7 +12,7 @@ public class Servidor {
 	private static HashMap<String,Usuario> usuarios = new HashMap<String,Usuario>();
 	
 	public static void main(String[] args) {
-		
+		//El servidor recibe peticiones de clientes ejecutando para cada una de ellas el hilo AtenderPeticionServidor
 		ServerSocket servidor=null;
 		CyclicBarrier barrera;
 		try {
@@ -36,6 +36,9 @@ public class Servidor {
 			Cerrar.cerrar(servidor);
 		}
 	}
+	
+	//Este metodo carga el fichero en el cual estan los usuarios, asi cada vez que arranquemos el servidor, podemos disponer de 
+	//los usuarios que se habian registrado previamente
 	public static void leerFichero() {
 		
 		FileInputStream fis = null;

@@ -42,6 +42,8 @@ public class Cliente {
 
 				servidorCliente = new ServerSocket(Integer.parseInt(puertoCliente.toString()));
 				interfazLlamada(servidorCliente, escritura, lectura, nombreUsuario);
+				
+				//Entra en un bucle en el cual esta esperando nuevas conexiones de otros clientes, una vez que llega una conexion ejecuta el hilo AtenderPeticionCliente
 				while (true) {
 					final Socket cliente = servidorCliente.accept();
 
@@ -67,7 +69,7 @@ public class Cliente {
 				e.printStackTrace();
 			}
 			Cerrar.cerrar(socketServer);
-			pool.shutdown();
+			pool.shutdownNow();
 		}
 	}
 
@@ -111,6 +113,9 @@ public class Cliente {
 
 	}
 
+	
+	//El metodo llama a la interfaz grafica llamar, y al ser un hilo, el programa principal sigue con su ejecucion, para asi poder recibir llamadas
+	// mientras nosotros podemos efectuar otra
 	public static void interfazLlamada(ServerSocket servidor, PrintWriter esc, DataInputStream lec,
 			StringBuilder nombreUsuario) {
 		EventQueue.invokeLater(new Runnable() {

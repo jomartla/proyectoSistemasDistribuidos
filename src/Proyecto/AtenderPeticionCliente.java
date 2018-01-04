@@ -24,6 +24,11 @@ public class AtenderPeticionCliente implements Runnable {
 		nomUsuario = nomUs;
 	}
 
+	/*
+	 * Este hilo se ejectuta de forma continua recibiendo un tipo de peticion:
+	 * 1: LLamada
+	 */
+	
 	@Override
 	public void run() {
 		DataInputStream leerPeticion = null;
@@ -46,6 +51,9 @@ public class AtenderPeticionCliente implements Runnable {
 			Cerrar.cerrar(leerPeticion);
 		}
 	}
+	
+	//El metodo gestiona la peticion llamada, en la cual se ejecuta la interfaz grafica RecibirLlamada, la cual bloqueara la ejecucion hasta que se cierre esa ventana
+	//Se bloque mediante el uso de CyclicBarrier
 	private void peticionLlamada(String peticion, PrintWriter escribirRespuesta, String nomUsuario) {
 		
 		escribirRespuesta.println("ok " + puertoChat);

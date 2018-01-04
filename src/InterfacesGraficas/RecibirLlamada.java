@@ -1,6 +1,6 @@
 package InterfacesGraficas;
 
-import Proyecto.AtenderChat;
+import Proyecto.AtenderPeticionChat;
 
 import java.awt.*;
 
@@ -104,18 +104,31 @@ public class RecibirLlamada extends JFrame {
 			public void run() {
 				try {
 					Chat frame = new Chat(socketConexionChat, nomUsuarioPrincipal);
-					AtenderChat atenderChat = new AtenderChat(frame);
+					
+					
+					AtenderPeticionChat atenderChat = new AtenderPeticionChat(frame);
 					pool.execute(atenderChat);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
+					
+					frame.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+							pool.shutdownNow();
+						}
+					});
 
 					contentPane.setVisible(false);
 					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				
 			}
+			
+			
 		});
+	
 		this.dispose();
 		
 	}

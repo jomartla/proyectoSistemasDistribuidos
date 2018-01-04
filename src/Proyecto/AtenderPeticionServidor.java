@@ -15,12 +15,22 @@ public class AtenderPeticionServidor implements Runnable {
 		this.socketCliente = socketCliente;
 		this.usuarios = usuarios;
 	}
+	
+	 /* Este hilo se ejectuta de forma continua recibiendo 6 tipos de peticiones:
+	 * 1: Logearse
+	 * 2: Obtener un usuario
+	 * 3: Añadir un usuario
+	 * 4: Conectarse a un usuario
+	 * 5: Desconectarse
+	 * 6: Conectarse
+	 */
 
 	public void run() {
 
 		DataInputStream leerPeticion = null;
 		PrintWriter escribirRespuesta = null;
 
+		
 		try {
 			leerPeticion = new DataInputStream(socketCliente.getInputStream());
 			escribirRespuesta = new PrintWriter(new OutputStreamWriter(socketCliente.getOutputStream()));
@@ -46,7 +56,6 @@ public class AtenderPeticionServidor implements Runnable {
 			System.out.println("Se ha desconectado un cliente");
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			Cerrar.cerrar(leerPeticion);
@@ -54,13 +63,15 @@ public class AtenderPeticionServidor implements Runnable {
 
 	}
 
+	//El metodo gestiona la peticion de login, donde se comprueba que la contraseña corresponde con la del usuario registrado
+	//admas fija la direccion y el puerto que usa ese usuario.
+	//En caso de que no coincida enviara un error.
 	public void peticionLogin(String linea, PrintWriter escribirRespuesta) {
 
 		String[] partes = linea.split(" ");
 
 		if (usuarios.containsKey(partes[1])) {
 			if (usuarios.get(partes[1]).getContrasena().equals(partes[2])) {
-				// TO STRING E INETADRESS PUEDEN DAR PROBLEMAS
 				usuarios.get(partes[1]).setDireccion(socketCliente.getInetAddress().toString().substring(1));
 				usuarios.get(partes[1]).setPuerto(Integer.parseInt(partes[3]));
 
@@ -75,6 +86,7 @@ public class AtenderPeticionServidor implements Runnable {
 
 	}
 
+	//El metodo gestiona la peticion Get, en la cual se devolvera el nombre real y la direccion del usuario a buscar
 	public void peticionGet(String linea, PrintWriter escribirRespuesta) {
 
 		String[] partes = linea.split(" ");
@@ -87,7 +99,9 @@ public class AtenderPeticionServidor implements Runnable {
 		}
 		escribirRespuesta.flush();
 	}
-
+	
+	
+	//El metodo gestiona la peticion add, en la cual se añadira con los datos especificados en el mesnaje un nuevo usuario a la lista
 	public void peticionAdd(String linea, PrintWriter escribirRespuesta) {
 
 		String[] partes = linea.split(" ");
@@ -108,6 +122,8 @@ public class AtenderPeticionServidor implements Runnable {
 		escribirRespuesta.flush();
 	}
 
+	
+	//En la peticion ConnectTo, se devuelve la direccion y el puerto en el que esta funcionando el otro usuario a conectarse
 	public void peticionConnectToSomeone(String linea, PrintWriter escribirRespuesta) {
 
 		String[] partes = linea.split(" ");
@@ -119,7 +135,6 @@ public class AtenderPeticionServidor implements Runnable {
 			} else {
 				escribirRespuesta.println(
 						"ok " + usuarios.get(partes[1]).getDireccion() + " " + usuarios.get(partes[1]).getPuerto());
-				// System.out.println(usuarios.get(partes[1]).getPuerto());
 			}
 		} else {
 			escribirRespuesta.println("error 417");
@@ -127,6 +142,8 @@ public class AtenderPeticionServidor implements Runnable {
 		escribirRespuesta.flush();
 	}
 
+	
+	//El metodo marca que un usuario se ha desconectado, eliminado asi su direccion en la cual estaba funcionando
 	public void peticionDisconnect(String linea, PrintWriter escribirRespuesta) {
 
 		String[] partes = linea.split(" ");
@@ -144,6 +161,7 @@ public class AtenderPeticionServidor implements Runnable {
 		Cerrar.cerrar(socketCliente);
 	}
 
+	//El metodo marca que el usaurio se ha conectado, actuializando asi la direccion y el puerto desde la cual esta trabajando
 	public void peticionConnect(String linea, PrintWriter escribirRespuesta) {
 
 		String[] partes = linea.split(" ");
@@ -163,6 +181,7 @@ public class AtenderPeticionServidor implements Runnable {
 
 	}
 
+	//El metodo guarda la lista de usuarios en un fichero, para asi no perder los usuarios que se han registrado previamente
 	public static void save() {
 
 		FileOutputStream fos = null;

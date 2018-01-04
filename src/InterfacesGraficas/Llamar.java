@@ -10,7 +10,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import Cerrar.Cerrar;
-import Proyecto.AtenderChat;
+import Proyecto.AtenderPeticionChat;
 
 public class Llamar extends JFrame {
 
@@ -60,12 +60,7 @@ public class Llamar extends JFrame {
 		panel_1 = new JPanel();
 		contentPane.add(panel_1);
 
-		this.addWindowListener(new java.awt.event.WindowAdapter() {
-			@Override
-			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-				pool.shutdown();
-			}
-		});
+		
     
 		btnConectar = new JButton("Conectar");
 
@@ -124,17 +119,30 @@ public class Llamar extends JFrame {
 						respuesta = contestacionLlamada.readLine();
 								
 						if (respuesta.startsWith("ok")) {
-			
+							Chat frame = new Chat(socketConexionChat,nomUsuarioPrincipal);
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
 									try {
-										Chat frame = new Chat(socketConexionChat,nomUsuarioPrincipal);
-										AtenderChat atenderChat = new AtenderChat(frame);
+										
+										AtenderPeticionChat atenderChat = new AtenderPeticionChat(frame);
+										frame.dispose();
+										
+										
 										pool.execute(atenderChat);
 										frame.setVisible(true);
 									} catch (Exception e) {
 										e.printStackTrace();
 									}
+								}
+							});
+							
+							
+
+							this.addWindowListener(new java.awt.event.WindowAdapter() {
+								@Override
+								public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+									pool.shutdownNow();
+									frame.dispose();
 								}
 							});
 							sonido.close();
