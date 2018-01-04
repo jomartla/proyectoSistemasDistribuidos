@@ -80,7 +80,7 @@ public class Registrarse extends JFrame {
 	 * Si se ha añadido correctamente, la ventana se cerrara automaticamente
 	 */
 	protected void registrarse() {
-		if(!tfContrasena.getText().isEmpty() || !tfNUsuario.getText().isEmpty() || !tfNReal.getText().isEmpty() || !tfContrasena.getText().contains(" ") ||  !tfNUsuario.getText().contains(" ") || !tfNReal.getText().contains(" ")){
+		if(!tfContrasena.getText().isEmpty() && !tfNUsuario.getText().isEmpty() && !tfNReal.getText().isEmpty() && !tfContrasena.getText().contains(" ") &&  !tfNUsuario.getText().contains(" ") && !tfNReal.getText().contains(" ")){
 			escritura.println("Add " + tfNUsuario.getText() + " " + tfContrasena.getText() + " " + tfNReal.getText());
 			escritura.flush();
 			
