@@ -10,13 +10,15 @@ import java.awt.event.*;
 public class Registrarse extends JFrame {
 
 	private JPanel contentPane;
-
-	//Se declaran como atributos los streams, para asi evitar tener que abrirlos cada vez que hacedemos, haciendolo mas eficaz
 	PrintWriter escritura;
 	DataInputStream lectura;
 	private JTextField tfNReal;
 	private JTextField tfNUsuario;
 	private JPasswordField tfContrasena;
+	/*
+	 * Se abre cuando en la interfaz Login, se clica en la opción de registro.
+	 * En el constructor se crea la interfaz.
+	 */
 	public Registrarse(PrintWriter esc, DataInputStream lec) {
 		escritura = esc;
 		lectura = lec;
@@ -72,11 +74,11 @@ public class Registrarse extends JFrame {
 		});
 		panel_2.add(btnRegistrarse);
 	}
-	
-
-	//Al presionar el boton acceder, se envia un mensaje al servidor con los datos introducidos (no se permiten campos vacios)
-	//y este respondera con diferentes respuestas en funcion de si se ha podido completar la opcion (Especificado en README)
-	//Si se ha añadido correctamente, la ventana se cerrara automaticamente
+	/*
+	 * Al presionar el boton acceder, se envia un mensaje al servidor con los datos introducidos (no se permiten campos vacios)
+	 * y este respondera con diferentes respuestas en funcion de si se ha podido completar la opcion (Especificado en README)
+	 * Si se ha añadido correctamente, la ventana se cerrara automaticamente
+	 */
 	protected void registrarse() {
 		if(!tfContrasena.getText().isEmpty() || !tfNUsuario.getText().isEmpty() || !tfNReal.getText().isEmpty() || !tfContrasena.getText().contains(" ") ||  !tfNUsuario.getText().contains(" ") || !tfNReal.getText().contains(" ")){
 			escritura.println("Add " + tfNUsuario.getText() + " " + tfContrasena.getText() + " " + tfNReal.getText());

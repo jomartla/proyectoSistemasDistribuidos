@@ -25,7 +25,9 @@ public class Llamar extends JFrame {
 	private Socket socketConexionChat;
 	
 	private Clip sonido;
-
+	
+	//Esta interfaz se abre cuando conseguimos loguearnos correctamente.
+	//En el constructor generamos la interfaz.
 	public Llamar(PrintWriter esc, DataInputStream lec, StringBuilder nomUsuario) {
 		
 		ExecutorService pool = Executors.newCachedThreadPool();
@@ -74,7 +76,14 @@ public class Llamar extends JFrame {
 		});
 		panel_1.add(btnConectar);
 	}
-
+	/*
+	 * El método llamar envía una petición al servidor junto al nombre de usuario al que se quiere conectar.
+	 * Existen varias respuestas posibles:
+	 * 1: El usuario está conectado y el servidor nos manda la dirección ip actual, a través de la cual le llamamos.
+	 * Si el otro usuario no nos cuelga iniciamos una interfaz chat y un atender chat que reciba peticiones del otro cliente.
+	 * 2: El usuario no existe, y por tanto no se realiza la conexión.
+	 * 3: Ha habido un fallo al realizar la conexión, y por tanto no podemos abrir el chat.
+	 */
 	protected void llamar(String nomUsuarioPrincipal, ExecutorService pool) {
 		if (!tdUsuarioConectar.getText().replaceAll("\\s", "").isEmpty()) {
 			escritura.println("ConnectTo " + tdUsuarioConectar.getText().replaceAll("\\s", ""));

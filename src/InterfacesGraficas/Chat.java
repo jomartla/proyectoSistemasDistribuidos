@@ -22,6 +22,11 @@ public class Chat extends JFrame {
 	private JButton btnEnviar;
 	private JButton btnAdjuntar;
 
+	/*Una vez aceptada la llamada. Se lanza la interfaz del chat (esta). 
+	 A esta clase se le pasa el nombre de usuario del cliente con el que nos estamos conectando y el propio socket de dicha conexion.
+	 
+	 En el constructor creamos la interfaz.
+	*/
 	public Chat(Socket socketConexionChat, String nomUsuario) {
 
 		setResizable(false);
@@ -103,6 +108,7 @@ public class Chat extends JFrame {
 		}
 		
 	}
+	//Mediante este método enviamos automáticamente lo que esté en el TextField al otro usuario.
 	public class PresionarEnter extends KeyAdapter {
 	      public void keyPressed(KeyEvent ke) {
 	          if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -110,7 +116,13 @@ public class Chat extends JFrame {
 	          }
 	      }
 	}
-
+	/*
+	 * En este método enviamos un archivo siguiendo los siguientes pasos:
+	 * 1. Recogemos la ruta del archivo desde el campo donde escribe el usuario.
+	 * 2. Comprobamos que la ruta es valida y que el elemento a enviar lo es tambien.
+	 * 3. Si todo es correcto, enviamos la petición Archivo junto al nombre de usuario, el nombre del fichero y el tamaño.
+	 * 4. Acto seguido enviamos el fichero byte a byte.
+	 */
 	protected void enviarArchivo() {
 
 		DataInputStream leerArchivo = null;
@@ -154,8 +166,8 @@ public class Chat extends JFrame {
 			Cerrar.cerrar(leerArchivo);
 		}
 	}
-
-
+	//Este método comprueba que el campo donde escribe el usuario no está vacío.
+	//Y si no lo está, escribe el contenido en su propio chat, y envía una petición de escribir al otro usuario.
 	protected void enviar() {
 		if(textField.getText().equals("")){
 			
@@ -166,6 +178,7 @@ public class Chat extends JFrame {
 			textField.setText("");
 		}
 	}
+	//Este método escribe que el chat ha finalizado al otro usuario y después envía la petición de desconectar.
 	protected void desconectar() {
 		escribirLineaSocket.println("Escribir " + "---------- CHAT FINALIZADO: "+nomUsuario+ " ------------ \n");
 		escribirLineaSocket.println("Desconectar "+ nomUsuario);
@@ -173,11 +186,13 @@ public class Chat extends JFrame {
 		
 		Cerrar.cerrar(socketConexionChat);
 	}
+	//Cuando recibimos una petición de desconexión, se llama a este método para que no se pueda seguir utilizando el chat.
 	public void desactivar(){
 		textField.setEditable(false);
 		btnAdjuntar.setEnabled(false);
 		btnEnviar.setEnabled(false);
 	}
+	//A continuación tenemos diversos gets utilizados en otras clases.
 	public Socket getSocketLlamada() {
 		return this.socketConexionChat;
 	}

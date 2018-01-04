@@ -18,6 +18,8 @@ public class Login extends JFrame {
 	private CyclicBarrier cb;
 	private JTextField textField;
 
+	// Login es la primera interfaz que tenemos al iniciar la aplicación.
+	// En el constructor creamos la interfaz.
 	public Login(PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario, CyclicBarrier barrera, StringBuilder puertoCliente) {
 		setTitle("Login");
 		escritura = esc;
@@ -84,10 +86,12 @@ public class Login extends JFrame {
 
 		panel.add(btnAcceder);
 	}
+	/*
+	 *Al presionar el boton registrarse, se despliega una nueva ventana, en la
+	 *cual se le pediran los datos correspondientes
+	 *para registrarse en la aplicacion
+	 */
 
-	// Al presionar el boton registrarse, se despliega una nueva ventana, en la
-	// cual se le pediran los datos correspondientes
-	// para registrarse en la aplicacion
 	protected void registrarse() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -100,11 +104,12 @@ public class Login extends JFrame {
 			}
 		});
 	}
-	
-	// Al presionar el boton acceder, se envia un mensaje al servidor con los
-	// datos introducidos (no se permiten campos vacios)
-	// y este respondera con diferentes respuestas en funcion de si se ha podido
-	// completar la opcion (Especificado en README)
+	/*
+	 * Al presionar el boton acceder, se envia un mensaje al servidor con 
+	 * los datos introducidos (no se permiten campos vacios)
+	 * y este respondera con diferentes respuestas en funcion de si 
+	 * se ha podido completar la opcion (Especificado en README)
+	 */
 	protected void acceder(StringBuilder nombreUs, String PuertoAUsarCliente, StringBuilder puertoCliente) {
 		if (!tfContrasena.getText().isEmpty() || !tfContrasena.getText().contains(" ") || !tfUsuario.getText().isEmpty()
 				|| tfUsuario.getText().contains(" ")) {

@@ -22,10 +22,12 @@ public class RecibirLlamada extends JFrame {
 	private Socket socketConexionChat;
 	private Clip sonido;
 	
-
+	/*
+	 * El recibir llamada aparece cuando atenderPeticionCliente recibe una petición de Llamada.
+	 * En el constructor creamos la interfaz.
+	 */
 	public RecibirLlamada(String nomUsuarioEntrante, Socket socketConexionChat,  PrintWriter escribirRespuesta, String nombreUsuarioPrincipal) {
 		
-		 
 		try {
 			sonido = AudioSystem.getClip();
 			sonido.open(AudioSystem.getAudioInputStream(new File("recibirllamada.wav")));
@@ -35,8 +37,6 @@ public class RecibirLlamada extends JFrame {
 			e.printStackTrace();
 		}
         
-		ExecutorService pool = Executors.newCachedThreadPool();	
-		
 		this.socketConexionChat=socketConexionChat;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,8 +64,7 @@ public class RecibirLlamada extends JFrame {
 		JButton btnColgar = new JButton("Rechazar");
 		btnColgar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				colgarLlamada(escribirRespuesta, sonido, pool);
-				
+				colgarLlamada(escribirRespuesta, sonido);
 			}
 		});
 		panel.add(btnColgar);
@@ -74,29 +73,33 @@ public class RecibirLlamada extends JFrame {
 
 		btnRecibir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				recibirLlamada(nomUsuarioEntrante,escribirRespuesta, nombreUsuarioPrincipal, sonido, pool);
+				recibirLlamada(nomUsuarioEntrante,escribirRespuesta, nombreUsuarioPrincipal, sonido);
 			}
 		});
 		panel.add(btnRecibir);
 	}
-
-
-	protected void colgarLlamada( PrintWriter escribirRespuesta, Clip sonido, ExecutorService pool) {
+	/*
+	 * Cuando se pulsa en el botón de colgar.
+	 * Se envía, de acuerdo al protocolo definido, el mensaje error 501. 
+	 * Que será correctamente getionado desde la otra parte.
+	 */
+	protected void colgarLlamada( PrintWriter escribirRespuesta, Clip sonido) {
 		sonido.close();
 		escribirRespuesta.println("error 501");	
 		escribirRespuesta.flush();
 		this.dispose();
 		contentPane.setVisible(false);
-		pool.shutdown();
+		
 		Cerrar.cerrar(socketConexionChat);
 	}
-
-
-	protected void recibirLlamada(String nomUsuarioEntrante,  PrintWriter escribirRespuesta, String nomUsuarioPrincipal, Clip sonido, ExecutorService pool) {
+	/*
+	 * Al clicar en recibir Llamada. Creamos un chat para nosotros y un atenderchat que escuche las peticiones desde la otra parte.
+	 */
+	protected void recibirLlamada(String nomUsuarioEntrante,  PrintWriter escribirRespuesta, String nomUsuarioPrincipal, Clip sonido) {
 		sonido.close();
 		escribirRespuesta.println("ok");
 		escribirRespuesta.flush();
-		
+		ExecutorService pool = Executors.newCachedThreadPool();	
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -105,12 +108,7 @@ public class RecibirLlamada extends JFrame {
 					pool.execute(atenderChat);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
-					frame.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-							pool.shutdown();
-						}
-					});
+
 					contentPane.setVisible(false);
 					
 				} catch (Exception e) {
