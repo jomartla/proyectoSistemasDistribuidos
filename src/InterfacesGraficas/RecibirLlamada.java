@@ -35,6 +35,8 @@ public class RecibirLlamada extends JFrame {
 			e.printStackTrace();
 		}
         
+		ExecutorService pool = Executors.newCachedThreadPool();	
+		
 		this.socketConexionChat=socketConexionChat;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,7 +64,7 @@ public class RecibirLlamada extends JFrame {
 		JButton btnColgar = new JButton("Rechazar");
 		btnColgar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				colgarLlamada(escribirRespuesta, sonido);
+				colgarLlamada(escribirRespuesta, sonido, pool);
 				
 			}
 		});
@@ -72,29 +74,29 @@ public class RecibirLlamada extends JFrame {
 
 		btnRecibir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				recibirLlamada(nomUsuarioEntrante,escribirRespuesta, nombreUsuarioPrincipal, sonido);
+				recibirLlamada(nomUsuarioEntrante,escribirRespuesta, nombreUsuarioPrincipal, sonido, pool);
 			}
 		});
 		panel.add(btnRecibir);
 	}
 
 
-	protected void colgarLlamada( PrintWriter escribirRespuesta, Clip sonido) {
+	protected void colgarLlamada( PrintWriter escribirRespuesta, Clip sonido, ExecutorService pool) {
 		sonido.close();
 		escribirRespuesta.println("error 501");	
 		escribirRespuesta.flush();
 		this.dispose();
 		contentPane.setVisible(false);
-		
+		pool.shutdown();
 		Cerrar.cerrar(socketConexionChat);
 	}
 
 
-	protected void recibirLlamada(String nomUsuarioEntrante,  PrintWriter escribirRespuesta, String nomUsuarioPrincipal, Clip sonido) {
+	protected void recibirLlamada(String nomUsuarioEntrante,  PrintWriter escribirRespuesta, String nomUsuarioPrincipal, Clip sonido, ExecutorService pool) {
 		sonido.close();
 		escribirRespuesta.println("ok");
 		escribirRespuesta.flush();
-		ExecutorService pool = Executors.newCachedThreadPool();	
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -103,7 +105,12 @@ public class RecibirLlamada extends JFrame {
 					pool.execute(atenderChat);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
-
+					frame.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+							pool.shutdown();
+						}
+					});
 					contentPane.setVisible(false);
 					
 				} catch (Exception e) {

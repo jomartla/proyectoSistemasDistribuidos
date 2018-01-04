@@ -115,9 +115,13 @@ public class Llamar extends JFrame {
 									try {
 										Chat frame = new Chat(socketConexionChat,nomUsuarioPrincipal);
 										AtenderChat atenderChat = new AtenderChat(frame);
-										Thread demonioAtenderChat = new Thread(atenderChat);
-										demonioAtenderChat.setDaemon(true);
-										pool.execute(demonioAtenderChat);
+										frame.addWindowListener(new java.awt.event.WindowAdapter() {
+											@Override
+											public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+												pool.shutdown();
+											}
+										});
+										pool.execute(atenderChat);
 										frame.setVisible(true);
 									} catch (Exception e) {
 										e.printStackTrace();
@@ -128,17 +132,21 @@ public class Llamar extends JFrame {
 						}
 						else{
 							if (respuesta.split(" ")[1].equals("501")) {
+								pool.shutdown();
+								sonido.close();
 								JOptionPane.showMessageDialog(null, "Error: El usuario a conectar ha rechazado la peticion");
 								Cerrar.cerrar(socketConexionChat);
 							}
 						}
 					} else {
+						sonido.close();
+						pool.shutdown();
 						JOptionPane.showMessageDialog(null, "Error: Fallo al establecer la conexion");
 						Cerrar.cerrar(socketConexionChat);
 					}
 				} else if (respuesta.startsWith("error")) {
+					pool.shutdown();
 					if (respuesta.split(" ")[1].equals("417")) {
-						
 						JOptionPane.showMessageDialog(null, "Error: El usuario a conectar no existe");
 					} else if (respuesta.split(" ")[1].equals("416")) {
 						JOptionPane.showMessageDialog(null, "Error: El usuario a conectar no esta disponible");
@@ -152,6 +160,7 @@ public class Llamar extends JFrame {
 			}
 
 		} else {
+			pool.shutdown();
 			JOptionPane.showMessageDialog(null, "Error: El campo esta vacio");
 			
 		}
