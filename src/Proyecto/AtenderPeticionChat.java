@@ -79,20 +79,17 @@ public class AtenderPeticionChat implements Runnable {
 			
 			
 			byte[] buff = new byte[100];
-			
-			int partesEnteras = tamanoFichero/100;
-
-			
+					
 			int leidos = leerPeticion.read(buff);
+			tamanoFichero = tamanoFichero - leidos;
 			
-			while(partesEnteras>0){
+			while(tamanoFichero>0){
 				escribirFichero.write(buff,0,leidos);
 				leidos=leerPeticion.read(buff);
-				
-					partesEnteras--;
+				tamanoFichero = tamanoFichero - leidos;
 			}
 
-			escribirFichero.write(buff,0,leidos);
+			
 
 
 			Cerrar.cerrar(escribirFichero);
