@@ -22,14 +22,12 @@ public class Cliente {
 
 	public static void main(String[] args) {
 		Socket socketServer = null;
-		Socket socketCliente = null;
 		ServerSocket servidorCliente = null;
 		PrintWriter escritura = null;
 		DataInputStream lectura = null;
 		StringBuilder nombreUsuario = new StringBuilder();
 		String estado = new String();
 		StringBuilder puertoCliente = new StringBuilder();
-		StringBuilder puertoChat = new StringBuilder();
 		ExecutorService pool = null;
 
 		try {
@@ -38,9 +36,7 @@ public class Cliente {
 			lectura = new DataInputStream(socketServer.getInputStream());
 			pool = Executors.newCachedThreadPool();
 
-			login(escritura, lectura, nombreUsuario, puertoCliente, puertoChat);
-			// ServerSocket servidorChat = new
-			// ServerSocket(Integer.parseInt(puertoChat.toString()));
+			comenzarLogin(escritura, lectura, nombreUsuario, puertoCliente);
 
 			if (!nombreUsuario.toString().equals("")) {
 
@@ -50,8 +46,10 @@ public class Cliente {
 					final Socket cliente = servidorCliente.accept();
 
 					AtenderPeticionCliente atenderLlamadas = new AtenderPeticionCliente(cliente, estado, nombreUsuario);
-
-					pool.execute(atenderLlamadas);
+					
+					Thread demonioAtenderLlamadas = new Thread(atenderLlamadas);
+					demonioAtenderLlamadas.setDaemon(true);
+					pool.execute(demonioAtenderLlamadas);
 
 				}
 			}
@@ -68,7 +66,7 @@ public class Cliente {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			Cerrar.cerrar(servidorCliente);
+			Cerrar.cerrar(socketServer);
 			pool.shutdown();
 		}
 	}
@@ -78,13 +76,12 @@ public class Cliente {
 	// opciones, o acceder, lo que equivaldra a logearse,
 	// introduciendo su nombre y contraseña, o registrarse, como nuevo usuario,
 	// desplegando para ello una nueva ventana
-	private static void login(PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario,
-			StringBuilder puertoCliente, StringBuilder puertoChat) {
+	private static void comenzarLogin(PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario, StringBuilder puertoCliente) {
 		CyclicBarrier cb = new CyclicBarrier(2);
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Login frame = new Login(esc, lec, nombreUsuario, cb, puertoCliente, puertoChat);
+					Login frame = new Login(esc, lec, nombreUsuario, cb, puertoCliente);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
 					frame.addWindowListener(new java.awt.event.WindowAdapter() {

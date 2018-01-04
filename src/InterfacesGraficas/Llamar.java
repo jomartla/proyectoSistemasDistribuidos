@@ -1,48 +1,35 @@
 package InterfacesGraficas;
 
-import java.awt.EventQueue;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import java.util.concurrent.*;
+import javax.sound.sampled.*;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import Cerrar.Cerrar;
 import Proyecto.AtenderChat;
-
 
 public class Llamar extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField tdUsuarioLlamar;
+	private JTextField tdUsuarioConectar;
 	private JPanel panel_1;
-	private JButton btnLlamar;
+	private JButton btnConectar;
 	private StringBuilder nomUsuario;
 
 	private PrintWriter escritura;
 	private DataInputStream lectura;
-	private Socket socketLlamada;
+	private Socket socketConexionChat;
 	
 	private Clip sonido;
 
 	public Llamar(PrintWriter esc, DataInputStream lec, StringBuilder nomUsuario) {
+		
+		ExecutorService pool = Executors.newCachedThreadPool();
+		
 		escritura = esc;
 		lectura = lec;
 		this.nomUsuario = nomUsuario;
@@ -64,30 +51,30 @@ public class Llamar extends JFrame {
 
 		panel.add(lblUsuarioALlamar);
 
-		tdUsuarioLlamar = new JTextField();
-		panel.add(tdUsuarioLlamar);
-		tdUsuarioLlamar.setColumns(10);
+		tdUsuarioConectar = new JTextField();
+		panel.add(tdUsuarioConectar);
+		tdUsuarioConectar.setColumns(10);
 
 		panel_1 = new JPanel();
 		contentPane.add(panel_1);
 
     
-		btnLlamar = new JButton("Conectar");
+		btnConectar = new JButton("Conectar");
 
-		btnLlamar.addActionListener(new ActionListener() {
+		btnConectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				llamar(nomUsuario.toString());
+				llamar(nomUsuario.toString(), pool);
 			}
 		});
-		panel_1.add(btnLlamar);
+		panel_1.add(btnConectar);
 	}
 
-	protected void llamar(String nomUsuarioPrincipal) {
-		if (!tdUsuarioLlamar.getText().replaceAll("\\s", "").isEmpty()) {
-			escritura.println("ConnectTo " + tdUsuarioLlamar.getText().replaceAll("\\s", ""));
+	protected void llamar(String nomUsuarioPrincipal, ExecutorService pool) {
+		if (!tdUsuarioConectar.getText().replaceAll("\\s", "").isEmpty()) {
+			escritura.println("ConnectTo " + tdUsuarioConectar.getText().replaceAll("\\s", ""));
 			escritura.flush();
 
-			socketLlamada = null;
+			socketConexionChat = null;
 			PrintWriter mensajeLlamada = null;
 			DataInputStream contestacionLlamada = null;
 
@@ -96,16 +83,12 @@ public class Llamar extends JFrame {
 				System.out.println(respuesta);
 				if (respuesta.startsWith("ok")) {
 					String[] partes = respuesta.split(" ");
-
-
-					//UTILIZAR AL QUITAR LOCALHOST
-					
 					String direccion = partes[1];
 
 
-					socketLlamada = new Socket(direccion, Integer.parseInt(partes[2]));
-					mensajeLlamada = new PrintWriter(new OutputStreamWriter(socketLlamada.getOutputStream()));
-					contestacionLlamada = new DataInputStream(socketLlamada.getInputStream());
+					socketConexionChat = new Socket(direccion, Integer.parseInt(partes[2]));
+					mensajeLlamada = new PrintWriter(new OutputStreamWriter(socketConexionChat.getOutputStream()));
+					contestacionLlamada = new DataInputStream(socketConexionChat.getInputStream());
 
 					mensajeLlamada.println("Llamada " + nomUsuario);
 					mensajeLlamada.flush();
@@ -119,28 +102,22 @@ public class Llamar extends JFrame {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-			         
-			     
-			         
 
 					respuesta = contestacionLlamada.readLine();
 					
 					if (respuesta.startsWith("ok")) {
-						//Socket socketChat = new Socket("localhost", Integer.parseInt((respuesta.split(" ")[1])));
 						respuesta = contestacionLlamada.readLine();
-						
-						
+								
 						if (respuesta.startsWith("ok")) {
-							ExecutorService pool = Executors.newCachedThreadPool();
-							
+			
 							EventQueue.invokeLater(new Runnable() {
 								public void run() {
 									try {
-										Chat frame = new Chat(socketLlamada,nomUsuarioPrincipal);
-										AtenderChat atenderChat = new AtenderChat(frame,nomUsuario.toString());
-
-
-										pool.execute(atenderChat);
+										Chat frame = new Chat(socketConexionChat,nomUsuarioPrincipal);
+										AtenderChat atenderChat = new AtenderChat(frame);
+										Thread demonioAtenderChat = new Thread(atenderChat);
+										demonioAtenderChat.setDaemon(true);
+										pool.execute(demonioAtenderChat);
 										frame.setVisible(true);
 									} catch (Exception e) {
 										e.printStackTrace();
@@ -148,20 +125,20 @@ public class Llamar extends JFrame {
 								}
 							});
 							sonido.close();
-
 						}
 						else{
 							if (respuesta.split(" ")[1].equals("501")) {
 								JOptionPane.showMessageDialog(null, "Error: El usuario a conectar ha rechazado la peticion");
-
+								Cerrar.cerrar(socketConexionChat);
 							}
 						}
 					} else {
 						JOptionPane.showMessageDialog(null, "Error: Fallo al establecer la conexion");
+						Cerrar.cerrar(socketConexionChat);
 					}
 				} else if (respuesta.startsWith("error")) {
 					if (respuesta.split(" ")[1].equals("417")) {
-
+						
 						JOptionPane.showMessageDialog(null, "Error: El usuario a conectar no existe");
 					} else if (respuesta.split(" ")[1].equals("416")) {
 						JOptionPane.showMessageDialog(null, "Error: El usuario a conectar no esta disponible");
@@ -176,6 +153,7 @@ public class Llamar extends JFrame {
 
 		} else {
 			JOptionPane.showMessageDialog(null, "Error: El campo esta vacio");
+			
 		}
 
 	}

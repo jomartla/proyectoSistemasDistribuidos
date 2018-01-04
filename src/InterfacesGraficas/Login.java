@@ -18,7 +18,7 @@ public class Login extends JFrame {
 	private CyclicBarrier cb;
 	private JTextField textField;
 
-	public Login(PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario, CyclicBarrier barrera, StringBuilder puertoCliente, StringBuilder puertoChat) {
+	public Login(PrintWriter esc, DataInputStream lec, StringBuilder nombreUsuario, CyclicBarrier barrera, StringBuilder puertoCliente) {
 		setTitle("Login");
 		escritura = esc;
 		lectura = lec;
@@ -78,7 +78,7 @@ public class Login extends JFrame {
 		JButton btnAcceder = new JButton("Acceder");
 		btnAcceder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				acceder(nombreUsuario, textField.getText(), puertoCliente, puertoChat);
+				acceder(nombreUsuario, textField.getText(), puertoCliente);
 			}
 		});
 
@@ -105,7 +105,7 @@ public class Login extends JFrame {
 	// datos introducidos (no se permiten campos vacios)
 	// y este respondera con diferentes respuestas en funcion de si se ha podido
 	// completar la opcion (Especificado en README)
-	protected void acceder(StringBuilder nombreUs, String PuertoAUsarCliente, StringBuilder puertoCliente, StringBuilder puertoChat) {
+	protected void acceder(StringBuilder nombreUs, String PuertoAUsarCliente, StringBuilder puertoCliente) {
 		if (!tfContrasena.getText().isEmpty() || !tfContrasena.getText().contains(" ") || !tfUsuario.getText().isEmpty()
 				|| tfUsuario.getText().contains(" ")) {
 			escritura.println("Login " + tfUsuario.getText() + " " + tfContrasena.getText() + " " + PuertoAUsarCliente);
@@ -120,8 +120,6 @@ public class Login extends JFrame {
 					escritura.println("Connect " + tfUsuario.getText().replaceAll("\\s", "") + " " + PuertoAUsarCliente);
 					puertoCliente.delete(0, puertoCliente.length());
 					puertoCliente.append(PuertoAUsarCliente);
-					
-					puertoChat.delete(0, puertoChat.length());
 					escritura.flush();
 					
 					respuesta = lectura.readLine();

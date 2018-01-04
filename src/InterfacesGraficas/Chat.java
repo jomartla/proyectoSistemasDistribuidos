@@ -1,27 +1,20 @@
 package InterfacesGraficas;
 
-
 import Cerrar.Cerrar;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.*;
 import javax.swing.border.*;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.*;
-
-
 import java.net.Socket;
-import java.util.concurrent.BrokenBarrierException;
-import java.awt.event.ActionEvent;
 
 public class Chat extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textField;
 	private JTextArea textArea;
-	private Socket socketLlamada;
+	private Socket socketConexionChat;
 	private PrintWriter escribirLineaSocket;
 	private String nomUsuario;
 	private DataInputStream recibirRespuesta;
@@ -29,17 +22,15 @@ public class Chat extends JFrame {
 	private JButton btnEnviar;
 	private JButton btnAdjuntar;
 
-	public Chat(Socket socketLlamada, String nomUsuario) {
+	public Chat(Socket socketConexionChat, String nomUsuario) {
 
 		setResizable(false);
 		this.nomUsuario = nomUsuario;
-		this.socketLlamada = socketLlamada;
+		this.socketConexionChat = socketConexionChat;
 
 		try {
-
-			
-			escribirLineaSocket = new PrintWriter(new OutputStreamWriter(socketLlamada.getOutputStream()));
-			recibirRespuesta = new DataInputStream(socketLlamada.getInputStream());
+			escribirLineaSocket = new PrintWriter(new OutputStreamWriter(socketConexionChat.getOutputStream()));
+			recibirRespuesta = new DataInputStream(socketConexionChat.getInputStream());
 
 			setTitle("Chat - " + nomUsuario);
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -111,8 +102,6 @@ public class Chat extends JFrame {
 			e1.printStackTrace();
 		}
 		
-		
-
 	}
 	public class PresionarEnter extends KeyAdapter {
 	      public void keyPressed(KeyEvent ke) {
@@ -135,10 +124,8 @@ public class Chat extends JFrame {
 					escribirLineaSocket.println("Archivo " + nomUsuario + " " + f.getName() + " " + f.length());
 					escribirLineaSocket.flush();
 
-
-
 					leerArchivo = new DataInputStream(new FileInputStream(f));
-					escribirArchivo = new DataOutputStream(socketLlamada.getOutputStream());
+					escribirArchivo = new DataOutputStream(socketConexionChat.getOutputStream());
 
 					byte[] buff = new byte[100];
 					int leidos = leerArchivo.read(buff);
@@ -183,15 +170,16 @@ public class Chat extends JFrame {
 		escribirLineaSocket.println("Escribir " + "---------- CHAT FINALIZADO: "+nomUsuario+ " ------------ \n");
 		escribirLineaSocket.println("Desconectar "+ nomUsuario);
 		escribirLineaSocket.flush();
+		
+		Cerrar.cerrar(socketConexionChat);
 	}
 	public void desactivar(){
 		textField.setEditable(false);
-		btnAdjuntar.setEnabled(false);;
-		btnEnviar.setEnabled(false);;
-		
+		btnAdjuntar.setEnabled(false);
+		btnEnviar.setEnabled(false);
 	}
 	public Socket getSocketLlamada() {
-		return this.socketLlamada;
+		return this.socketConexionChat;
 	}
 
 	public void escribir(String nomUsuario, String mensaje) {

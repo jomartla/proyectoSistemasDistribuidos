@@ -5,7 +5,6 @@ import java.net.*;
 import java.util.*;
 
 import Cerrar.Cerrar;
-import sun.net.ConnectionResetException;
 
 public class AtenderPeticionServidor implements Runnable {
 
@@ -141,6 +140,8 @@ public class AtenderPeticionServidor implements Runnable {
 			escribirRespuesta.println("error 422");
 		}
 		escribirRespuesta.flush();
+		
+		Cerrar.cerrar(socketCliente);
 	}
 
 	public void peticionConnect(String linea, PrintWriter escribirRespuesta) {

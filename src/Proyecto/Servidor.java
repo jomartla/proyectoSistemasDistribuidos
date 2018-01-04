@@ -25,7 +25,7 @@ public class Servidor {
 				final Socket cliente = servidor.accept();
 
 				AtenderPeticionServidor atenderCliente = new AtenderPeticionServidor(cliente,usuarios);
-
+				
 				pool.execute(atenderCliente);
 			}
 	

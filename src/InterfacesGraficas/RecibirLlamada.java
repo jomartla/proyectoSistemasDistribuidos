@@ -4,12 +4,12 @@ import Proyecto.AtenderChat;
 
 import java.awt.*;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.border.*;
+
+import Cerrar.Cerrar;
+
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
@@ -19,11 +19,11 @@ import java.util.concurrent.*;
 public class RecibirLlamada extends JFrame {
 
 	private JPanel contentPane;
-	private Socket socketLlamada;
+	private Socket socketConexionChat;
 	private Clip sonido;
 	
 
-	public RecibirLlamada(String nomUsuarioEntrante, Socket socketLlamada,  PrintWriter escribirRespuesta, String nombreUsuarioPrincipal) {
+	public RecibirLlamada(String nomUsuarioEntrante, Socket socketConexionChat,  PrintWriter escribirRespuesta, String nombreUsuarioPrincipal) {
 		
 		 
 		try {
@@ -35,7 +35,7 @@ public class RecibirLlamada extends JFrame {
 			e.printStackTrace();
 		}
         
-		this.socketLlamada=socketLlamada;
+		this.socketConexionChat=socketConexionChat;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 358, 156);
@@ -85,6 +85,8 @@ public class RecibirLlamada extends JFrame {
 		escribirRespuesta.flush();
 		this.dispose();
 		contentPane.setVisible(false);
+		
+		Cerrar.cerrar(socketConexionChat);
 	}
 
 
@@ -96,8 +98,8 @@ public class RecibirLlamada extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Chat frame = new Chat(socketLlamada, nomUsuarioPrincipal);
-					AtenderChat atenderChat = new AtenderChat(frame, nomUsuarioEntrante);
+					Chat frame = new Chat(socketConexionChat, nomUsuarioPrincipal);
+					AtenderChat atenderChat = new AtenderChat(frame);
 					pool.execute(atenderChat);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
